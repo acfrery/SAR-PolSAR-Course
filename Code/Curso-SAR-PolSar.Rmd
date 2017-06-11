@@ -14,27 +14,70 @@ When you save the notebook, an HTML file containing the code and output will be 
 # Parte I: Elementos de análisis estadístico de imágenes PolSAR usando R
 
 ## A1 -- Formación del dato SAR
+
 ## A2 -- El modelo multiplicativo y distribuciones de intensidad
+```{r}
+require(shape)
+require(wesanderson)
+set.seed(1234567890, kind="Mersenne-Twister")
+factor.reduccion <- .5
+### Gráfico de formación del speckle
+
+N <- 10 # número de espalhadores
+sigma2 <- 1
+RAi <- c(0, rnorm(n = N, mean = 0, sd = sqrt(sigma2)))
+IAi <- c(0, rnorm(n = N, mean = 0, sd = sqrt(sigma2)))
+
+### Determinación de la caja para dibujar los ejes
+rangex <- range(cumsum(RAi))
+rangey <- range(cumsum(IAi))
+maxaxis <- max(abs(c(rangex, rangey))) * factor.reduccion
+
+### El área de dibujo
+plot(c(-maxaxis, maxaxis), c(-maxaxis, maxaxis), type = "n", asp = 1,
+     axes = FALSE,
+     xlab = "Real Components", ylab = "Imaginary Components")
+Arrows(x0 = -maxaxis, y0 = 0, x1 = maxaxis, y1 = 0, arr.type="triangle")
+Arrows(y0 = -maxaxis, x0 = 0, y1 = maxaxis, x1 = 0, arr.type="triangle")
+
+### Los vectores sumándose
+Arrows(x0 = RAi[1:(N)], y0 = IAi[1:(N)], x1 = RAi[2:(N+1)], y1 = IAi[2:(N+1)], lwd=.3)
+
+### El vector final
+Arrows(x0 = 0, y0 = 0, x1 = RAi[N+1], y1 = IAi[N+1], lwd = 3, col = 2)
+
+### Fin Gráfico de formación del speckle
+```
 ## T1 -- Introducción
+
 ## T2 -- Lectura de datos
 
 ## T3 -- Operaciones básicas en R
+
 ## T4 -- Visualización de imágenes, mejoría de contraste
 
-
 ## T5 -- Análisis estadístico descriptivo 
+
 ## T6 -- Análisis estadístico cuantitativo
+
 ## A3 -- Filtros reductores de speckle
+
 ## A4 -- Evaluación de filtros
 
 # Parte II: PolSARpro
 
 ## T7 -- Introducción
+
 ## T8 -- Lectura de datos
+
 ## A5 -- Datos polarimétricos: distribuciones 
+
 ## A6 -- Descomposición H-alfa
+
 ## A7 -- Clasificación
 
 ## T9 -- Operaciones en PolSARpro: filtrado de speckle, descomposiciones polarimétricas, clasificación
+
 ## T10 -- Exportación
+
 ## A8 -- Tests de hipótesis y detección de cambios
