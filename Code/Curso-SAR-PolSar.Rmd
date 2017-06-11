@@ -1,9 +1,4 @@
----
-output:
-  html_document: default
-  word_document: default
----
----
+
 title: "Course on SAR-PolSAR Statistics"
 author: "Alejandro C. Frery and Antonio C. Medeiros"
 date: "Initial: 11 June 2017"
@@ -16,6 +11,30 @@ Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by press
 
 When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file).
 
-# Elementos de análisis estadístico de imágenes PolSAR usando R
+# Parte I: Elementos de análisis estadístico de imágenes PolSAR usando R
 
-##  T1 -- Introducción
+## A1 -- Formación del dato SAR
+## A2 -- El modelo multiplicativo y distribuciones de intensidad
+## T1 -- Introducción
+## T2 -- Lectura de datos
+
+## T3 -- Operaciones básicas en R
+## T4 -- Visualización de imágenes, mejoría de contraste
+
+
+## T5 -- Análisis estadístico descriptivo 
+## T6 -- Análisis estadístico cuantitativo
+## A3 -- Filtros reductores de speckle
+## A4 -- Evaluación de filtros
+
+# Parte II: PolSARpro
+
+## T7 -- Introducción
+## T8 -- Lectura de datos
+## A5 -- Datos polarimétricos: distribuciones 
+## A6 -- Descomposición H-alfa
+## A7 -- Clasificación
+
+## T9 -- Operaciones en PolSARpro: filtrado de speckle, descomposiciones polarimétricas, clasificación
+## T10 -- Exportación
+## A8 -- Tests de hipótesis y detección de cambios
