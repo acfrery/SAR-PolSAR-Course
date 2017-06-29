@@ -17,8 +17,9 @@ When you save the notebook, an HTML file containing the code and output will be 
 
 ## A2 -- El modelo multiplicativo y distribuciones de intensidad
 ```{r}
-require(shape)
-require(wesanderson)
+if(!require(shape)){install.packages("shape"); require("shape")}
+if(!require(wesanderson)){install.packages("wesanderson"); require("wesanderson")}
+
 set.seed(1234567890, kind="Mersenne-Twister")
 factor.reduccion <- .5
 ### Gráfico de formación del speckle
