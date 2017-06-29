@@ -47,9 +47,9 @@ Arrows(x0 = RAi[1:(N)], y0 = IAi[1:(N)], x1 = RAi[2:(N+1)], y1 = IAi[2:(N+1)], l
 ### El vector final
 Arrows(x0 = 0, y0 = 0, x1 = RAi[N+1], y1 = IAi[N+1], lwd = 3, col = 2)
 
-### Fin Gr??fico de formaci??n del speckle
+### Fin Gráfico de formacióon del speckle
 ```
-## T1 -- Introduccion
+## T1 -- Introducción
 
 R ?? um programa livre e um ambiente computacional de explora????o de gr??ficos e
 an??lise de dados (Chambers 6
@@ -65,7 +65,7 @@ O R ?? utilizado para explorar, analisar e compreender os dados epidemiol??gicos
 dados podem ser importados de fontes como, por exemplo, o DATASUS 1 ou o IBGE 2
 em planilhas de Excel.
 
-### No????es de programa????o em R
+### Nociones de programación en R
 
 Os comandos (scripts em linguagem R) devem ser explicitados na linha de comando
 (console) ou por meio de um editor de texto (a ser comentado depois). Veja os exemplos
