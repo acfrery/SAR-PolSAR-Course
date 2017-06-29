@@ -137,10 +137,10 @@ require(data.table)
 #OperacoesR <- data.table(Operador = c( "+", "-", "*", "/", "^", "abs", "exp", "log", "sqrt", "rnorm"),
 #                        Descricao = c( "Adicao", "Subtracao", "Multiplicacao", "Divisao", "Exponenciacao", "Valor Absoluto", #"log logaritmo (default \'e log natural)", "Raiz quadrada", "sorteia 100.000 valores de uma Normal"),
 #                        Exemplos = c( "5+4", "5-4", "5*4", "5/4", "5^4", "abs(-5)", "exp(5)", "log(exp(5)", "sqrt(64)", #"rnorm(100000)"))
-Tabela <- data.table(Operador = c("a", "b"),
-                     Descr = c("c", "d"),
-                     Exemplos = c("e", "f")
-                     )
+Tabela <- data.table(Operador = c("+", "-","*","/", "^", "abs", "exp", "log", "sqrt", "rnorm" ),
+                     Descricao = c("Adicao", "Subtracao", "Multiplicacao", "Divisao", "Exponenciacao", "Valor Absoluto", "log logaritmo (default \'e log natural)", "Raiz quadrada", "sorteia 100.000 valores de uma Normal"),
+                     Exemplos = c("5+4", "5-4", "5*4", "5/4", "5^4", "abs(-5)", "exp(5)", "log(exp(5)", "sqrt(64)", "rnorm(100000)"))
+                    
 kable(Tabela, booktabs = T)
 
 ```                        
