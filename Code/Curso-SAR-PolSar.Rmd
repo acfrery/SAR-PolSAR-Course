@@ -11,9 +11,9 @@ Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by press
 
 When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file).
 
-# Parte I: Elementos de análisis estadístico de imágenes PolSAR usando R
+# Parte I: Elementos de analisis estadistico de imagenes PolSAR usando R
 
-## A1 -- Formación del dato SAR
+## A1 -- Formacion del dato SAR
 
 ## A2 -- El modelo multiplicativo y distribuciones de intensidad
 ```{r}
@@ -22,63 +22,98 @@ if(!require(wesanderson)){install.packages("wesanderson"); require("wesanderson"
 
 set.seed(1234567890, kind="Mersenne-Twister")
 factor.reduccion <- .5
-### Gráfico de formación del speckle
+### Gr??fico de formaci??n del speckle
 
-N <- 10 # número de espalhadores
+N <- 10 # n??mero de espalhadores
 sigma2 <- 1
 RAi <- c(0, rnorm(n = N, mean = 0, sd = sqrt(sigma2)))
 IAi <- c(0, rnorm(n = N, mean = 0, sd = sqrt(sigma2)))
 
-### Determinación de la caja para dibujar los ejes
+### Determinaci??n de la caja para dibujar los ejes
 rangex <- range(cumsum(RAi))
 rangey <- range(cumsum(IAi))
 maxaxis <- max(abs(c(rangex, rangey))) * factor.reduccion
 
-### El área de dibujo
+### El ??rea de dibujo
 plot(c(-maxaxis, maxaxis), c(-maxaxis, maxaxis), type = "n", asp = 1,
      axes = FALSE,
      xlab = "Real Components", ylab = "Imaginary Components")
 Arrows(x0 = -maxaxis, y0 = 0, x1 = maxaxis, y1 = 0, arr.type="triangle")
 Arrows(y0 = -maxaxis, x0 = 0, y1 = maxaxis, x1 = 0, arr.type="triangle")
 
-### Los vectores sumándose
+### Los vectores sum??ndose
 Arrows(x0 = RAi[1:(N)], y0 = IAi[1:(N)], x1 = RAi[2:(N+1)], y1 = IAi[2:(N+1)], lwd=.3)
 
 ### El vector final
 Arrows(x0 = 0, y0 = 0, x1 = RAi[N+1], y1 = IAi[N+1], lwd = 3, col = 2)
 
-### Fin Gráfico de formación del speckle
+### Fin Gr??fico de formaci??n del speckle
 ```
-## T1 -- Introducción
+## T1 -- Introduccion
+
+R ?? um programa livre e um ambiente computacional de explora????o de gr??ficos e
+an??lise de dados (Chambers 6
+, 2008). Ele ?? ??til para qualquer pessoa que usa e interpreta
+dados, das seguintes maneiras:
+2
+??? Super-calculadora;
+??? Ambiente com diversos pacotes estat??sticos;
+??? Ferramenta de gr??ficos de alta qualidade;
+??? Linguagem de programa????o multi-uso.
+
+O R ?? utilizado para explorar, analisar e compreender os dados epidemiol??gicos. Os
+dados podem ser importados de fontes como, por exemplo, o DATASUS 1 ou o IBGE 2
+em planilhas de Excel.
+
+### No????es de programa????o em R
+
+Os comandos (scripts em linguagem R) devem ser explicitados na linha de comando
+(console) ou por meio de um editor de texto (a ser comentado depois). Veja os exemplos
+de opera????es matem??ticas (Quadro 2):
+
+Quadro 2: R como super-calculadora.
+
+
+Operador Descri????o Exemplos
++ adi????o 5+4
+- subtra????o 5-4
+* multiplica????o 5*4
+/ divis??o 5/4
+??? exponencia????o 5???4
+abs valor absoluto abs(-5)
+exp exponencia????o (na base e) exp(5)
+log logaritmo (default ?? log natural) log(exp(5))
+sqrt raiz quadrada sqrt(64)
+rnorm sorteia 100.000 valores de uma Normal rnorm(100000)
 
 ## T2 -- Lectura de datos
 
-## T3 -- Operaciones básicas en R
+## T3 -- Operaciones basicas en R
 
-## T4 -- Visualización de imágenes, mejoría de contraste
+## T4 -- Visualizacion de imagenes, mejoria de contraste
 
-## T5 -- Análisis estadístico descriptivo 
+## T5 -- Analisis estadistico descriptivo 
 
-## T6 -- Análisis estadístico cuantitativo
+## T6 -- Analisis estadistico cuantitativo
 
 ## A3 -- Filtros reductores de speckle
 
-## A4 -- Evaluación de filtros
+## A4 -- Evaluacion de filtros
 
 # Parte II: PolSARpro
 
-## T7 -- Introducción
+## T7 -- Introduccion
 
 ## T8 -- Lectura de datos
 
-## A5 -- Datos polarimétricos: distribuciones 
+## A5 -- Datos polarimetricos: distribuciones 
 
-## A6 -- Descomposición H-alfa
+## A6 -- Descomposicion H-alfa
 
-## A7 -- Clasificación
+## A7 -- Clasificacion
 
-## T9 -- Operaciones en PolSARpro: filtrado de speckle, descomposiciones polarimétricas, clasificación
+## T9 -- Operaciones en PolSARpro: filtrado de speckle, descomposiciones polarimetricas, clasificacion
 
-## T10 -- Exportación
+## T10 -- Exportacion
 
-## A8 -- Tests de hipótesis y detección de cambios
+## A8 -- Tests de hipotesis y deteccion de cambios
