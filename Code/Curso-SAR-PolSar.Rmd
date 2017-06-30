@@ -130,7 +130,8 @@ Quadro 2: R como super-calculadora.
 ```{r}
 require(knitr) 
 require(kableExtra)
-require(data.table)
+if(!require(data.table)){install.packag
+  es("data.table"); require(data.table)}
 
 #Criando conjunto de dados
 
