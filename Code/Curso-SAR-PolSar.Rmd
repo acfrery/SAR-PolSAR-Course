@@ -10,44 +10,78 @@ Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by press
 
 When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file).
 
-# Parte I: Elementos de analisis estadistico de imagenes PolSAR usando R
+# Parte I: Elementos de análisis estadístico de imágenes PolSAR usando R
 
-## A1 -- Formacion del dato SAR
+## A1 -- Formación del dato SAR
 
-## A2 -- El modelo multiplicativo y distribuciones de intensidad
+Una escena es iluminada por un haz electromagnético.
+Cada ``mancha'' de la señal en la escena generará un pixel de imagen.
+La intensidad que cada mancha devuelve al sensor es el resultado de la suma coherente de los retornos individuales de los dispersores elementales.
+
+Si $A_n e^{j \phi_n}$ es el retorno (complejo) del dispersor $n$, y si tenemos $N$ dispersores en la célula iluminada, entonces el retorno total de la célula es
+$$
+A = \sum_{n=1}^N A_n e^{j \phi_n}. 
+$$
+Así, el retorno (complejo) $A$ puede descomponerse en sus partes real
+$$
+\Re(A) = \sum_{n=1}^N A_n \cos \phi_n
+$$
+e imaginaria
+$$
+\Im(A) = \sum_{n=1}^N A_n \sin \phi_n.
+$$
+Si en cada pixel observamos $A$, tenemos una imagen SAR en formato complejo.
+
+Frecuentemente, en vez de $A$ tomamos su amplitud o, más frecuentemente, su intensidad, que está dada por
+$$
+I = \big(\Re(A)\big)^2 + \big(\Im(A)\big)^2.
+$$
+Hasta ahora no podemos afirmar nada sobre las propiedades de $I$.
+
 ```{r}
 if(!require(shape)){install.packages("shape"); require("shape")}
 if(!require(wesanderson)){install.packages("wesanderson"); require("wesanderson")}
 
 set.seed(1234567890, kind="Mersenne-Twister")
 factor.reduccion <- .5
-### Gr??fico de formaci??n del speckle
+### Gráfico de formación del speckle
 
-N <- 10 # n??mero de espalhadores
+N <- 10 # número de dispersores elementales
 sigma2 <- 1
 RAi <- c(0, rnorm(n = N, mean = 0, sd = sqrt(sigma2)))
 IAi <- c(0, rnorm(n = N, mean = 0, sd = sqrt(sigma2)))
 
-### Determinaci??n de la caja para dibujar los ejes
+### Determinación de la caja para dibujar los ejes
 rangex <- range(cumsum(RAi))
 rangey <- range(cumsum(IAi))
 maxaxis <- max(abs(c(rangex, rangey))) * factor.reduccion
 
-### El ??rea de dibujo
+### El área de dibujo
 plot(c(-maxaxis, maxaxis), c(-maxaxis, maxaxis), type = "n", asp = 1,
      axes = FALSE,
-     xlab = "Real Components", ylab = "Imaginary Components")
+     xlab = "Componentes Reales", ylab = "Componentes Imaginarias")
 Arrows(x0 = -maxaxis, y0 = 0, x1 = maxaxis, y1 = 0, arr.type="triangle")
 Arrows(y0 = -maxaxis, x0 = 0, y1 = maxaxis, x1 = 0, arr.type="triangle")
 
-### Los vectores sum??ndose
+### Los vectores sumándose
 Arrows(x0 = RAi[1:(N)], y0 = IAi[1:(N)], x1 = RAi[2:(N+1)], y1 = IAi[2:(N+1)], lwd=.3)
 
 ### El vector final
 Arrows(x0 = 0, y0 = 0, x1 = RAi[N+1], y1 = IAi[N+1], lwd = 3, col = 2)
 
-### Fin Gráfico de formacióon del speckle
+### Fin Gráfico de formación del speckle
 ```
+
+El modelo básico que podemos tratar es el que describe la situación de tener muchos dispersores elementales ($N\to\infty$), que no se orientan de forma organizada, y que ninguno predomina sobre los otros.
+Esta es una situación razonable cuando modelamos, por ejemplo, pasto sobre una superficie sin relieve.
+
+Bajo esta suposición, supongamos que las amplitudes retornadas $A_n$ pueden ser descriptas por variables aleatorias independientes e idénticamente distribuídas.
+Supongamos también que las fases $\phi_n$ pueden ser descriptas por variables aleatorias independientes e idénticamente distribuídas y, más aún, que por no predominar ninguna fase podemos suponer que siguen una distribución uniforme en $(0,2\pi]$.
+
+Con estas hipótesis, podemos suponer que vale el Teorema Central del Límite
+
+## A2 -- El modelo multiplicativo y distribuciones de intensidad
+
 ## T1 -- Introducción
 
 R é um programa livre e um ambiente computacional de exploração de gráficos e
