@@ -1,0 +1,6 @@
+---
+title: ""
+output: html_notebook
+---
+
+## T2 -- Lectura de datos

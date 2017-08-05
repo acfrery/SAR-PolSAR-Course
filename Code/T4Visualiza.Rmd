@@ -1,0 +1,6 @@
+---
+title: ""
+output: html_notebook
+---
+
+## T4 -- Visualizacion de imagenes, mejoria de contraste

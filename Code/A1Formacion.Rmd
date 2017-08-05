@@ -1,0 +1,132 @@
+---
+title: ""
+output: html_notebook
+---
+# Parte I: Elementos de análisis estadístico de imágenes PolSAR usando R
+
+## A1 -- Formación del dato SAR
+
+Una escena es iluminada por un haz electromagnético.
+Cada ``mancha'' de la señal en la escena generará un pixel de imagen.
+La intensidad que cada mancha devuelve al sensor es el resultado de la suma coherente de los retornos individuales de los dispersores elementales.
+
+Si $A_n e^{j \phi_n}$ es el retorno (complejo) del dispersor $n$, y si tenemos $N$ dispersores en la célula iluminada, entonces el retorno total de la célula es
+$$
+A = \sum_{n=1}^N A_n e^{j \phi_n}. 
+$$
+Así, el retorno (complejo) $A$ puede descomponerse en sus partes real
+$$
+\Re(A) = \sum_{n=1}^N A_n \cos \phi_n
+$$
+e imaginaria
+$$
+\Im(A) = \sum_{n=1}^N A_n \sin \phi_n.
+$$
+Si en cada pixel observamos $A$, tenemos una imagen SAR en formato complejo.
+
+Frecuentemente, en vez de $A$ tomamos su amplitud o, más frecuentemente, su intensidad, que está dada por
+$$
+I = \big(\Re(A)\big)^2 + \big(\Im(A)\big)^2.
+$$
+Hasta ahora no podemos afirmar nada sobre las propiedades de $I$.
+
+```{r}
+if(!require(shape)){install.packages("shape"); require("shape")}
+if(!require(wesanderson)){install.packages("wesanderson"); require("wesanderson")}
+
+set.seed(1234567890, kind="Mersenne-Twister")
+factor.reduccion <- .5
+### Gráfico de formación del speckle
+
+N <- 10 # número de dispersores elementales
+sigma2 <- 1
+RAi <- c(0, rnorm(n = N, mean = 0, sd = sqrt(sigma2)))
+IAi <- c(0, rnorm(n = N, mean = 0, sd = sqrt(sigma2)))
+
+### Determinación de la caja para dibujar los ejes
+rangex <- range(cumsum(RAi))
+rangey <- range(cumsum(IAi))
+maxaxis <- max(abs(c(rangex, rangey))) * factor.reduccion
+
+### El área de dibujo
+plot(c(-maxaxis, maxaxis), c(-maxaxis, maxaxis), type = "n", asp = 1,
+     axes = FALSE,
+     xlab = "Componentes Reales", ylab = "Componentes Imaginarias")
+Arrows(x0 = -maxaxis, y0 = 0, x1 = maxaxis, y1 = 0, arr.type="triangle")
+Arrows(y0 = -maxaxis, x0 = 0, y1 = maxaxis, x1 = 0, arr.type="triangle")
+
+### Los vectores sumándose
+Arrows(x0 = RAi[1:(N)], y0 = IAi[1:(N)], x1 = RAi[2:(N+1)], y1 = IAi[2:(N+1)], lwd=.3)
+
+### El vector final
+Arrows(x0 = 0, y0 = 0, x1 = RAi[N+1], y1 = IAi[N+1], lwd = 3, col = 2)
+
+### Fin Gráfico de formación del speckle
+```
+
+El modelo básico que podemos tratar es el que describe la situación de tener muchos dispersores elementales ($N\to\infty$), que no se orientan de forma organizada, y que ninguno predomina sobre los otros.
+Esta es una situación razonable cuando modelamos, por ejemplo, pasto sobre una superficie sin relieve.
+
+Bajo esta suposición, supongamos que las amplitudes retornadas $A_n$ pueden ser descriptas por variables aleatorias independientes e idénticamente distribuídas.
+Supongamos también que las fases $\phi_n$ pueden ser descriptas por variables aleatorias independientes e idénticamente distribuídas y, más aún, que por no predominar ninguna fase podemos suponer que siguen una distribución uniforme en $(0,2\pi]$.
+
+Con estas hipótesis, podemos suponer que vale el Teorema Central del Límite.
+Siendo así,
+$$
+\big(\Re(A)\big) , \big(\Im(A)\big) \rightarrow \mathcal N(\mathbb{0}, \sigma^2 \mathbb 1 / 2),
+$$
+que denota una variable aleatoria gaussiana bivariada de médias nulas, independientes, y de varianzas iguales a $\sigma^2/2$.
+
+Con esto, la intensidad sigue una ley Exponencial de media $\sigma^2$, y podemos escribir
+$$
+I \sim \sigma^2 Y,
+$$
+en que $Y\sim E(1)$.
+La variable aleatoria $Y$ se denomina speckle, y $\sigma^2$ retrodispersión.
+
+Veamos a seguir tres densidades con medias diferentes en escala lineal.
+
+```{r ExpDensity_plot}
+colores <- wes_palette("Cavalcanti", 3)
+
+plot(c(0,5), c(0,2), type="n", axes = FALSE, xlab = "Intensidad", ylab = "Densidad Exponencial",
+     main = "Densidades Exponenciales - Escala Lineal")
+axis(1)
+axis(2)
+curve(dexp(x, rate = 2), col=colores[3], lwd=3, from=0, to=5, add=TRUE)
+curve(dexp(x, rate = 1), col=colores[1], lwd=3, add=TRUE)
+curve(dexp(x, rate = 1/3, ), col=colores[2], lwd=3, add=TRUE)
+legend("topright", lwd = c(3,3,3), col = colores, legend = c("Media 1", "Media 3", "Media 0.1"))
+```
+
+Veamos ahora las mismas densidades en escala semilogarítmica.
+```{r ExpDensity_plotlog}
+plot(c(0,5), c(10^(-5),10), type="n", axes = FALSE, log="y", xlab = "Intensidad", ylab = "Densidad Exponencial",
+     main = "Densidades Exponenciales - Escala Semilogarítmica")
+axis(1)
+axis(2)
+curve(dexp(x, rate = 2), col=colores[3], lwd=3, from=0.001, to=5, add=TRUE)
+curve(dexp(x, rate = 1), col=colores[1], lwd=3, add=TRUE)
+curve(dexp(x, rate = 1/3), col=colores[2], lwd=3, add=TRUE)
+legend("bottomleft", lwd = c(3,3,3), col = colores, legend = c("Media 1", "Media 3", "Media 0.1"))
+```
+
+Es importante ver siempre las densidades de los modelos para datos SAR en ambas escalas.
+La escala semilogarítmica revela el comportamiento del modelo para valores muy grandes.
+
+La relación señal-ruido de una ley exponencial de media $\sigma^2$ se puede medir por la recíproca del cuadrado del coeficiente de variación, que en la literatura SAR se denomina ``número de looks''.
+Como vale que si $Z\sim E(\sigma^2)$, entonces su esperanza y varianza están dadas por $\text{E}(Z)=\sigma^2$ y $\text{Var}(Z)=\sigma^4$, respectivamente; luego el coeficiente de variación es $\text{CV}(Z) = \sigma^4/(\sigma^2)^2$ y el número de looks es $1$.
+
+Para mitigar el efecto del speckle, se suele promediar $L$ observaciones (idealmente independientes) del mismo blanco.
+Así siendo, se tiene una observación en intensidad ``multilook'':
+$$
+I^{(L)} = \frac1L\sum_{\ell=1}^L \sigma^2 Y_\ell=\sigma^2 \frac1L\sum_{\ell=1}^L  Y_\ell.
+$$
+Admitiendo que $\sigma^2$ permanece constante, podemos modelar $I^{(L)}$ como una variable aleatoria gama de media unitaria y parámetro de forma $L$, multiplicada por $\sigma^2$.
+Con esto, $I^{(L)}$ sigue una ley gama de media $\sigma^2$ y parámetro de forma $L$.
+Denotaremos esta situación $Z\sim \Gamma(\sigma^2,L)$.
+La varianza de $Z$ es $\text{Var}(Z)=\sigma^4/L$, con lo que el número de looks pasa a ser $L$.
+
+En general, el número de looks no es conocido.
+Se puede estimar de varias formas, pero la más simple es como la razón entre el cuadrado de la media muestral y la varianza muestral, ambas calculadas sobre una muestra de datos donde valgan las hipótesis discutidas.
+A cualquier estimador del número de looks se lo denomina ``número equivalente de looks''.

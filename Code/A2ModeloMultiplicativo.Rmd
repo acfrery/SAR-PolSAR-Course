@@ -1,0 +1,12 @@
+---
+title: ""
+output: html_notebook
+---
+
+## A2 -- El modelo multiplicativo y distribuciones de intensidad
+
+Según el modelo multiplicativo elemental (para áreas sin textura), la intensidad se puede modelar con una distribución gama de media $\sigma^2$ y parámetro de forma $L$: $Z = \sigma^2 Y\sim \sigma^2 \Gamma(1,L)$.
+Nos interesa $\sigma^2$, mientras que $Y$ interfiere y, por ende, se considera ruido.
+
+Diversos factores pueden hacer que $\sigma^2$ no se mantenga constante para todos los píxeles del área observada, aún cuando se trate de un mismo tipo de blanco de la escena (blanco homogéneo).
+En ese caso, se puede modelar $\sigma^2$ como otra variable aleatoria, independiente de $Y$.

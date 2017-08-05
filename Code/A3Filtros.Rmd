@@ -1,0 +1,6 @@
+---
+title: ""
+output: html_notebook
+---
+
+## A3 -- Filtros reductores de speckle

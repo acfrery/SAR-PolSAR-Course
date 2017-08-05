@@ -1,0 +1,69 @@
+---
+title: ""
+output: html_notebook
+---
+
+## T1 -- Introducción
+
+R é um programa livre e um ambiente computacional de exploração de gráficos e
+análise de dados (Chambers 6
+, 2008). Ele é útil para qualquer pessoa que usa e interpreta
+dados, das seguintes maneiras:
+
+• Super-calculadora;  
+• Ambiente com diversos pacotes estatísticos;  
+• Ferramenta de gráficos de alta qualidade;  
+• Linguagem de programação multi-uso.  
+
+O R é utilizado para explorar, analisar e compreender os dados epidemiológicos. Os
+dados podem ser importados de fontes como, por exemplo, o DATASUS 1 ou o IBGE 2
+em planilhas de Excel.
+
+
+### Como Instalar o R
+O R é um software livre para computação estatística e construção de gráficos que pode ser baixado e distribuído
+gratuitamente de acordo com a licença GNU.
+O R está disponível para as plataformas UNIX, Windows e MacOS. 
+
+O R é case-sensitive, isto é, ele diferencia letras maiúsculas de minúsculas, portanto A é diferente de a. O
+separador de casas decimais é ponto ".". A vírgula é usada para separar argumentos (informações). Não é
+recomendado o uso de acentos em palavras (qualquer nome que for salvar em um computador, não só no R,
+evite usar acentos. Acentos são comandos usados em programação e podem causar erros, por exemplo, em
+documentos do word e excel).
+
+### Demonstrações
+Algumas funções do R possuem demonstrações de uso. Estas demonstrações podem ser vistas
+usando a função demo(). Vamos ver algumas demonstrações de gráficos que podem ser feitos no R. Digite
+o seguinte na linha de comandos:  
+> demo(graphics) # Vai aparecer uma mensagem pedindo que você tecle Enter para
+prosseguir, depois clique na janela do gráfico para ir passando os exemplos.  
+> demo(persp)  
+> demo(image)  
+
+### Pacotes do R
+O R é um programa leve (ocupa pouco espaço e memória) e geralmente roda rápido, até em computadores
+não muito bons. Isso porque ao instalarmos o R apenas as configurações mínimas para seu funcionamento
+básico são instaladas (pacotes que vem na instalação “base”). Para realizar tarefas mais complicadas pode ser
+necessário instalar pacotes adicionais (packages). 
+
+### Como usar um pacote do R
+Não basta apenas instalar um pacote. Para usá-lo é necessário "carregar" o pacote sempre que você abrir
+o R e for usá-lo. Use a função library para rodar um pacote. Por exemplo: Digite library(vegan)
+na linha de comandos do R.
+
+library(vegan) # Após isso as funcionalidades do vegan estarão prontas para serem
+usadas. Lembre-se que sempre que abrir o R será necessário carregar o pacote novamente.
+
+### Como citar o R, ou um pacote do R em publicações
+No R existe um comando que mostra como citar o R ou um de seus pacotes. Veja como fazer:
+
+citation() # Mostra como citar o R
+To cite R in publications use:
+R Development Core Team (2011). R: A language and environment for statistical computing. R Foundation
+for Statistical Computing, Vienna, Austria. ISBN 3-900051-07-0, URL http://www.R-project.org/.
+Veja que na parte com o nome dos autores aparece "R development core team", isso está correto, cite o R
+desta forma. Algumas pessoas não sabem disso e citam o R com autor Anônimo, isto tira o crédito do time.
+
+Para citar um pacote, por exemplo o vegan, basta colocar o nome do pacote entre aspas.
+
+citation("vegan")
