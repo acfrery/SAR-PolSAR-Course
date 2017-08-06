@@ -81,7 +81,7 @@ No decorrer da apostila você verá exemplos de cada um destes objetos.
 
 A função setwd faz com que você consiga ir a pasta desejada.
 
-```{r}
+```
 setwd("Documentos/Cursos/SAR-PolSAR-Course/Code/")
 ```
 A função getwd serve para saber em que pasta você se encontra.
