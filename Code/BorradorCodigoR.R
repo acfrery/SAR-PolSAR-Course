@@ -74,3 +74,23 @@ curve(dGI0(x, -1.5, 0.5, 1), col=colores[3], lwd=3, n = 500, from=0, to=5, add=T
 curve(dGI0(x, -1.5, 0.5, 3), col=colores[2], lwd=3, n = 500, add=TRUE)
 curve(dGI0(x, -1.5, 0.5, 8), col=colores[1], lwd=3, n = 500, add=TRUE)
 legend("topright", lwd = c(3,3,3), col = colores[c(3,2,1)], legend = c("L = 1", "L = 3", "L = 5"))
+
+source("./imagematrix.R")
+if(!require(tiff)){install.packages("tiff"); require(tiff)}
+
+barras <- readTIFF("strips.tif") # Leemos la imagen de barras
+dim(barras)
+range(barras) # Verificamos el rango de sus valores
+plot(imagematrix(barras)) # La visualizamos
+
+barras <- barras / max(barras) * (.9 - .1) + .1
+barras_1Look <- barras * matrix(data=rexp(n = 256*256, rate = 1), ncol=256, nrow = 256)
+plot(imagematrix(normalize(barras_1Look)))
+plot(imagematrix(equalize(barras_1Look)))
+
+plot(barras_1Look[, 214], type="n", xlab = "Línea", ylab = "Valores observados", axes = FALSE,
+     main = "Valores en la Columna 214: verdad y speckle 1-Look")
+axis(1)
+axis(2)
+lines(barras_1Look[, 214], col=colores[1])
+lines(barras[, 214],col=colores[2])
