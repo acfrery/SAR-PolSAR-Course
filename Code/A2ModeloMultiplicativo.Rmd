@@ -17,14 +17,14 @@ En ese caso, se puede modelar $\sigma^2$ como otra variable aleatoria, independi
 Se han propuesto diversos modelos para el backscatter $X$.
 Uno de los primeros, que tiene buen fundamento físico, es una distribución gama.
 Este modelo surge haciendo que el número de dispersores elementales $N$ siga una distribución binomial negativa.
-Si suponemos que $X$ sigue una distribución gama, y manteniendo el modelo gama para el speckle $Y$, y suponiendo que $X$ e $Y$ son independientes, llegamos a una distribución $K$.
+Si suponemos que $X$ sigue una distribución gama, y manteniendo el modelo gama para el speckle $Y$, y suponiendo que $X$ e $Y$ son independientes, llegamos a una distribución $K$ [@yueh89].
 Esta distribución es útil para modelar blancos con textura, esto es, con más variabilidad que la que el modelo gama puro puede explicar.
 Tiene como desventaja que la densidad, y por ende todo su tratamiento analítico, involucra la función de Bessel modificada $K$ (de ahí su denominación).
 Esta función no tiene forma explícita (es una integral), y aún buenas implementaciones padecen de problemas numéricos.
 
 Otro modelo para el backscatter es la distribución recíproca de gama.
 La distribución resultante para el retorno se denomina $\mathcal G_I^0$.
-Fue propuesta en 1997, y se la considera un ``Modelo Universal'' para datos SAR.
+Fue propuesta en 1997 [@frery96], y se la considera un ``Modelo Universal'' para datos SAR.
 Su densidad es
 $$
 f_Z(z;\alpha,\gamma,L) = \frac{L^L \Gamma(L-\alpha)}{\gamma^\alpha \Gamma(-\alpha) \Gamma(L)}
@@ -35,10 +35,10 @@ Esta densidad no involucra funciones especiales, y es capaz de modelar una buena
 
 Una implementación de esta densidad es
 ```{r}
-dGI0 <- function(z, p_alpha, p_gamma, p_Looks, log=FALSE) {
+dGI0 <- function(z, p_alpha, p_gamma, p_Looks) {
  return( 
   (p_Looks^p_Looks * gamma(p_Looks-p_alpha) * z^(p_Looks-1) ) / 
-      (p_gamma^p_alpha * gamma(-p_alpha) * gamma(p_Looks) * (p_gamma + z*p_Looks)^(p_Looks-p_alpha))
+  (p_gamma^p_alpha * gamma(-p_alpha) * gamma(p_Looks) * (p_gamma + z*p_Looks)^(p_Looks-p_alpha))
        ) 
 }
 ```
@@ -68,8 +68,7 @@ legend("topright", lwd = c(3,3,3), col = colores[c(3,2,1)], legend = c("L = 1", 
 
 y en escala semilogarítmica
 ```{r DensityPlotGI0ExtHet_Semilog}
-plot(c(0,5), c(10^(-2),10), type="n", axes = FALSE, log = "y", xlab = "Intensidad", ylab = "Densidades GI0 de Media Unitaria",
-     main = "Densidades del Retorno Extremamente Heterogéneo - Escala Semilogarítmica")
+plot(c(0,5), c(10^(-2),10), type="n", axes = FALSE, log = "y", xlab = "Intensidad", ylab = "Densidades GI0 de Media Unitaria", main = "Densidades del Retorno Extremamente Heterogéneo - Escala Semilogarítmica")
 axis(1)
 axis(2)
 curve(dGI0(x, -1.5, 0.5, 1), col=colores[3], lwd=3, n = 500, from=0, to=5, add=TRUE)
@@ -92,8 +91,7 @@ legend("topright", lwd = c(3,3,3), col = colores[c(3,2,1)], legend = c("L = 1", 
 
 y en escala semilogarítmica
 ```{r DensityPlotGI0Het_Semilog}
-plot(c(0,3), c(10^(-2),1.5), type="n", axes = FALSE, log = "y", xlab = "Intensidad", ylab = "Densidades GI0 de Media Unitaria",
-     main = "Densidades del Retorno Heterogéneo - Escala Semilogarítmica")
+plot(c(0,3), c(10^(-2),1.5), type="n", axes = FALSE, log = "y", xlab = "Intensidad", ylab = "Densidades GI0 de Media Unitaria", main = "Densidades del Retorno Heterogéneo - Escala Semilogarítmica")
 axis(1)
 axis(2)
 curve(dGI0(x, -3, 2, 1), col=colores[3], lwd=3, n = 500, from=0, to=5, add=TRUE)

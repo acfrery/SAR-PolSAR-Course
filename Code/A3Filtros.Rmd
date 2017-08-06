@@ -4,3 +4,13 @@ output: html_notebook
 ---
 
 ## A3 -- Filtros reductores de speckle
+
+Una de las áreas más activas en Procesamiento de Imágenes y Teledetección es la búsqueda por filtros reductores de speckle.
+Recomendamos la lectura del tutorial [@TutorialSpeckleReductionSAR].
+
+Un buen filtro de speckle tiene que:
+
+- mejorar la relación señal/ruido,
+- preservar pequeños detalles y bordes, y
+- preservar la información radiométrica de los blancos.
+
