@@ -6,3 +6,42 @@ output: html_notebook
 # Parte II: PolSARpro
 
 ## T7 -- Introduccion
+PolSARpro
+
+Airborne Data Sources
+
+AIRSAR (NASA/JPL)
+
+
+
+-------
+Death Valley (CA), U.S.A. 
+
+STK-MLC format with header: 1279 rows x 1024 cols 
+
+Download (11Mb) 
+
+Generated with processor v3.56
+
+--------
+Flevoland, NL 
+
+STK-MLC format with header: 750 rows x 1024 cols 
+
+Download (7Mb) 
+
+Generated with processor v3.56
+
+--------
+
+San Francisco Bay (CA), U.S.A. 
+
+STK-MLC format without header: 900 rows x 1024 cols
+
+Download (9Mb) 
+
+Generated with processor v3.56
+
+--------
+
+

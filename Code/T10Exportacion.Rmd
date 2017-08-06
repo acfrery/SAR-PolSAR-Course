@@ -4,3 +4,60 @@ output: html_notebook
 ---
 
 ## T10 -- Exportacion
+
+
+Preparação de dados POlsAR
+
+# Data: 23/06/2013
+
+
+##=========================================================
+## Read .bin and convert to .Rdata
+##=========================================================
+
+#To Full Polarimetric SAR Data only
+
+
+setwd("/Users/tonny.medeiros/Desktop/Site_Dados/SanFrancisco_C3/")
+
+read.PolSARpro <- function (path){
+  require(caTools)
+
+  #Real part
+  C11      <- read.ENVI( filename = paste(path, "C11.bin", sep = "") )
+  C22      <- read.ENVI( filename = paste(path, "C22.bin", sep = "") )
+  C33      <- read.ENVI( filename = paste(path, "C33.bin", sep = "") )
+
+  #Complex part: Real data 
+  C12_real <- read.ENVI( filename = paste(path, "C12_real.bin", sep = "") )
+  C13_real <- read.ENVI( filename = paste(path, "C13_real.bin", sep = "") )
+  C23_real <- read.ENVI( filename = paste(path, "C23_real.bin", sep = "") )
+
+  #Complex part: Imag data 
+  C12_imag <- read.ENVI( filename = paste(path, "C12_imag.bin", sep = "") )
+  C13_imag <- read.ENVI( filename = paste(path, "C13_imag.bin", sep = "") )
+  C23_imag <- read.ENVI( filename = paste(path, "C23_imag.bin", sep = "") )
+
+  Rdata <- array(0,dim=c(dim(C11),9))
+  Rdata[,,1] <- C11
+  Rdata[,,2] <- C22
+  Rdata[,,3] <- C33
+  Rdata[,,4] <- C12_real
+  Rdata[,,5] <- C13_real
+  Rdata[,,6] <- C23_real 
+  Rdata[,,7] <- C12_imag
+  Rdata[,,8] <- C13_imag
+  Rdata[,,9] <- C23_imag
+
+return(Rdata)
+}
+
+
+##------------------------------------------------------
+## Main
+##------------------------------------------------------
+
+#### San Francisco
+SanFran_Enxuto <- read.PolSARpro("/Users/tonny.medeiros/Desktop/Site_Dados/SanFrancisco_C3/")
+
+save(SanFran_Enxuto,file="/Users/tonny.medeiros/Desktop/Site_Dados/SanFrancisco_C3/")

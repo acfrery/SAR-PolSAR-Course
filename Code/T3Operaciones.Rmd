@@ -74,9 +74,20 @@ numéricas e variáveis categóricas (por exemplo, largura do rio e nome do rio,
 d) listas: conjunto de vetores, dataframes ou de matrizes. Não precisam ter o mesmo comprimento, é a
 forma que a maioria das funções retorna os resultados.  
 e) funções: as funções criadas para fazer diversos cálculos também são objetos do R.  
-No decorrer da apostila você verá exemplos de cada um destes objetos.   
+No decorrer da apostila você verá exemplos de cada um destes objetos.
 
 
+### Pastas
+
+A função setwd faz com que você consiga ir a pasta desejada.
+
+```{r}
+setwd("Documentos/Cursos/SAR-PolSAR-Course/Code/")
+```
+A função getwd serve para saber em que pasta você se encontra.
+```{r}
+getwd()
+```
 ### Como criar objetos
 ####Objetos vetores com valores numéricos
 Vamos criar um conjunto de dados de contém o número de espécies de aves (riqueza) coletadas em 10

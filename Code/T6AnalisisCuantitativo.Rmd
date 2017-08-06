@@ -1,6 +1,67 @@
 ---
-title: ""
-output: html_notebook
+title: ''
+output:
+  pdf_document: default
+  html_notebook: default
 ---
 
 ## T6 -- Analisis estadistico cuantitativo
+
+ Regressão linear
+Importando e manipulando dados
+
+
+Importando dados
+```{r}
+dap <- read.table("http://www.leg.ufpr.br/~walmes/cursoR/dap.txt", header=TRUE, sep="\t")
+str(dap)
+names(dap) <- c("d","h")
+##Criando novas variáveis regressoras
+dap$d2 <- dap$d^2
+dap <- transform(dap, d2=d^2, d3=d^3, dr=sqrt(d), dl=log(d), di=1/d, di2=1/d^2)
+str(dap)
+pairs(dap)
+dap <- dap[order(dap$d),]
+dapcc <- dap[complete.cases(dap),]
+rownames(dapcc) <- NULL
+head(dapcc)
+str(dapcc)
+```
+
+##Regressão linear simples
+
+
+Ajustando a equação da reta (regressão linear simples)
+```{r}
+m0 <- lm(h~d, data=dapcc)
+summary(m0)
+str(m0)
+```
+Verificando o ajuste
+```{r}
+plot(h~d, dapcc) # xlab=, ylab=
+lines(fitted(m0)~d, dapcc, col="red")
+abline(m0, col=3, lty=2)
+```
+Análise de resíduos
+```{r}
+par(mfrow=c(2,2))
+plot(m0)
+```
+Ajustando a equação da reta (regressão linear simples)
+```{r}
+m0 <- lm(h~d, data=dapcc)
+summary(m0)
+str(m0)
+```
+Verificando o ajuste
+```{r}
+plot(h~d, dapcc) # xlab=, ylab=
+lines(fitted(m0)~d, dapcc, col="red")
+abline(m0, col=3, lty=2)
+```
+Análise de resíduos
+```{r}
+par(mfrow=c(2,2))
+plot(m0)
+```

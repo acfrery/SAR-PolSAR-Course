@@ -1,6 +1,9 @@
 ---
-title: ""
-output: html_notebook
+title: ''
+output:
+  html_document: default
+  html_notebook: default
+  pdf_document: default
 ---
 
 ## T1 -- Introducción
@@ -67,3 +70,26 @@ desta forma. Algumas pessoas não sabem disso e citam o R com autor Anônimo, is
 Para citar um pacote, por exemplo o vegan, basta colocar o nome do pacote entre aspas.
 
 citation("vegan")
+
+### Ambiente de Desenvolvimetno Integrado IDE para R
+
+##Objetivo
+
+O objetivo do projeto Tinn-R é facilitar o aprendizado e o uso do potencial do ambiente estatístico e computacional R.
+
+## Tinn-R
+O Tinn-R é um editor/processador de texto ASCII/UNICODE genérico para o sistema operacional Windows, muito bem integrado ao ambiente estatístico e computacional R para o qual possui características de Interface Gráfica (GUI) e Ambiente de Desenvolvimento Integrado (IDE).
+
+É um projeto registrado sob a Licença Pública Geral GPL, sendo portanto software livre.
+
+## RStudio
+
+RStudio é um ambiente de desenvolvimento integrado (IDE) para R. Ele inclui um console, editor de destaque de sintaxe que suporta a execução direta de código, bem como ferramentas para traçar, fazer histórico, depurar e gerenciar espaço de trabalho. 
+
+O RStudio está disponível em edições comerciais e de código aberto e é executado na área de trabalho (Windows, Mac e Linux) ou em um navegador conectado ao RStudio Server ou RStudio Server Pro (Debian / Ubuntu, RedHat / CentOS e SUSE Linux).
+
+
+
+
+
+

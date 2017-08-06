@@ -1,6 +1,119 @@
 ---
-title: ""
-output: html_notebook
+title: ''
+output:
+  pdf_document: default
+  html_notebook: default
 ---
 
 ## T2 -- Lectura de datos
+
+
+Leitura e Manipulação de Dados
+
+Entrada de Dados Diretamente no R
+
+Função ''c()'' (concatenate ou combine)
+
+As funções de criação de vetores já foram detalhadas na seção anterior. Basta lembrar aqui que todas elas são usadas para entrar diretamente dados em vetores no R:
+
+```{r}
+meu.vetor <- c(4.3,8.9,18.2,6.5)
+meu.vetor
+vetor.vazio <- c()
+vetor.vazio
+```
+
+Função ''matrix()''
+
+A função matrix cria uma matriz com os valores do argumento data. O números de linhas e colunas são definidos pelos argumentos nrow e ncol:
+
+```{r}
+minha.matriz <- matrix(data=1:9,nrow=3,ncol=3)
+minha.matriz
+```
+
+Como o default do argumento data é NA, se ele é omitido o resultado é uma matriz vazia:
+```{r}
+minha.vazia <- matrix(nrow=3,ncol=3)
+minha.vazia
+```
+Também por default, os valores são preenchidos por coluna. Para preencher por linha basta o alterar o argumento byrow para TRUE:
+```{r}
+minha.matriz.lin <- matrix(data=1:12,nrow=3,ncol=4,byrow=T)
+minha.matriz.lin
+```
+Note que: (byrow=T) se for FALSE (the default) a matriz é preenchida por colunas, caso contrário a matriz é preenchida por linhas.
+```{r}
+minha.matriz2.Col <- matrix(data=1:12,nrow=3,ncol=4,byrow=F)
+minha.matriz2.Col
+```
+Se o argumento data tem menos elementos do que a matriz, eles são repetidos até preenchê-la:
+```{r}
+elementos <- matrix(c("ar","água","terra","fogo","Leeloo"),ncol=4,nrow=4)
+elementos
+```
+```{r}
+elementos <- matrix(c("fogo","água"),ncol=4,nrow=4)
+elementos
+```
+
+Função ''data.frame()''
+
+Com a função data.frame reunimos vetores de mesmo comprimento em um só objeto:
+```{r}
+nomes <- c("Beethoven","José de San Martin","Helena Blavatsky","Ruy Barbosa")
+ano.nasc <- c(1770,1778,1891,1849)
+vive <- c("F","F","F","F")
+Personalidades <- data.frame(nomes,ano.nasc,vive)
+Personalidades
+
+```
+# O mesmo, em um só comando:
+```{r}
+Personalidades.exemplo2 <- data.frame(nomes=c("Beethoven","José de San Martins","Helena Blavasky","Ruy Barbosa"), ano.nasc=c(1770,1778,1891,1849), vive=c("F","F","F","F"))
+Personalidades.exemplo2
+```
+### Dados que já Estão em Arquivos
+
+Antes vou até a pasta onde os arquvos estão.
+```{r}
+#setwd("Documentos/Cursos/SAR-PolSAR-Course/Code/")
+```
+
+Leitura e Exportação de Arquivos-Texto: ''read.table()'' e ''write.table()''
+
+Para conjuntos de dados grandes, é mais prático gerar um arquivo de texto (ASCII) a partir e uma planilha ou banco de dados, e usar a função read.table para ler os dados para um objeto no R.
+
+Para criar um objeto com os dados do arquivo gbmam93.csv (apagar extensão .pdf), por exemplo, digitamos:
+```{r}
+gbmam93 <- read.table(file="gbmam93.csv",header=T,row.names=1,sep=",")
+gbmam93
+```
+
+Com a função rea.table podemos carregar arquivos com extensão .txt, .csv. e outros.
+
+O argumento header=T indica que a primeira linha são os nomes das variáveis, assim como row.names=1 indica que a primeira coluna deve ser usada para os nomes das linhas. O argumento sep indica qual é o sinal de separação de cada registro, no caso vírgulas.
+
+Esses e os outros argumentos da função a tornam extremamente flexível para ler dados em arquivos texto. Consulte a ajuda para mais informações, e também para conhecer as variantes read.csv e read.delim.
+
+Para exportar um objeto para um arquivo texto, use a função write.table, que tem a mesma lógica.
+
+### Conjuntos de Dados Distribuídos com os Pacotes do R
+
+Muitos pacotes do R incluem conjuntos de dados para exemplos, treinamento e verificação de análises. Se o pacote já está carregado (funções library ou require) todos os seus objetos estão disponíveis, inclusive os objetos de dados. Incluindo as séries temporais de número de peles de linces caçados no Canadá, analisadas pelo ecólogo Charles Elton obtém-se:
+```{r}
+lynx
+#Time Series:
+Start = 1821
+End = 1934
+Frequency = 1
+```
+
+Como qualquer objeto de um pacote, lynx tem um arquivo de ajuda, que é exibido com o comando help(lynx) ou ?lynx:
+
+```{r}
+help(lynx)
+```
+
+
+

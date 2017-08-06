@@ -1,0 +1,519 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+title: "Course on SAR-PolSAR Statistics"
+author: "Alejandro C. Frery and Antonio C. Medeiros"
+date: "Initial: 11 June 2017"
+output:
+  html_document: default
+  html_notebook: default
+
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file).
+
+# Parte I: Elementos de análisis estadístico de imágenes PolSAR usando R
+
+## A1 -- Formación del dato SAR
+
+Una escena es iluminada por un haz electromagnético.
+Cada ``mancha'' de la señal en la escena generará un pixel de imagen.
+La intensidad que cada mancha devuelve al sensor es el resultado de la suma coherente de los retornos individuales de los dispersores elementales.
+
+Si $A_n e^{j \phi_n}$ es el retorno (complejo) del dispersor $n$, y si tenemos $N$ dispersores en la célula iluminada, entonces el retorno total de la célula es
+$$
+A = \sum_{n=1}^N A_n e^{j \phi_n}. 
+$$
+Así, el retorno (complejo) $A$ puede descomponerse en sus partes real
+$$
+\Re(A) = \sum_{n=1}^N A_n \cos \phi_n
+$$
+e imaginaria
+$$
+\Im(A) = \sum_{n=1}^N A_n \sin \phi_n.
+$$
+Si en cada pixel observamos $A$, tenemos una imagen SAR en formato complejo.
+
+Frecuentemente, en vez de $A$ tomamos su amplitud o, más frecuentemente, su intensidad, que está dada por
+$$
+I = \big(\Re(A)\big)^2 + \big(\Im(A)\big)^2.
+$$
+Hasta ahora no podemos afirmar nada sobre las propiedades de $I$.
+
+```{r}
+if(!require(shape)){install.packages("shape"); require("shape")}
+if(!require(wesanderson)){install.packages("wesanderson"); require("wesanderson")}
+
+set.seed(1234567890, kind="Mersenne-Twister")
+factor.reduccion <- .5
+### Gráfico de formación del speckle
+
+N <- 10 # número de dispersores elementales
+sigma2 <- 1
+RAi <- c(0, rnorm(n = N, mean = 0, sd = sqrt(sigma2)))
+IAi <- c(0, rnorm(n = N, mean = 0, sd = sqrt(sigma2)))
+
+### Determinación de la caja para dibujar los ejes
+rangex <- range(cumsum(RAi))
+rangey <- range(cumsum(IAi))
+maxaxis <- max(abs(c(rangex, rangey))) * factor.reduccion
+
+### El área de dibujo
+plot(c(-maxaxis, maxaxis), c(-maxaxis, maxaxis), type = "n", asp = 1,
+     axes = FALSE,
+     xlab = "Componentes Reales", ylab = "Componentes Imaginarias")
+Arrows(x0 = -maxaxis, y0 = 0, x1 = maxaxis, y1 = 0, arr.type="triangle")
+Arrows(y0 = -maxaxis, x0 = 0, y1 = maxaxis, x1 = 0, arr.type="triangle")
+
+### Los vectores sumándose
+Arrows(x0 = RAi[1:(N)], y0 = IAi[1:(N)], x1 = RAi[2:(N+1)], y1 = IAi[2:(N+1)], lwd=.3)
+
+### El vector final
+Arrows(x0 = 0, y0 = 0, x1 = RAi[N+1], y1 = IAi[N+1], lwd = 3, col = 2)
+
+### Fin Gráfico de formación del speckle
+```
+
+El modelo básico que podemos tratar es el que describe la situación de tener muchos dispersores elementales ($N\to\infty$), que no se orientan de forma organizada, y que ninguno predomina sobre los otros.
+Esta es una situación razonable cuando modelamos, por ejemplo, pasto sobre una superficie sin relieve.
+
+Bajo esta suposición, supongamos que las amplitudes retornadas $A_n$ pueden ser descriptas por variables aleatorias independientes e idénticamente distribuídas.
+Supongamos también que las fases $\phi_n$ pueden ser descriptas por variables aleatorias independientes e idénticamente distribuídas y, más aún, que por no predominar ninguna fase podemos suponer que siguen una distribución uniforme en $(0,2\pi]$.
+
+Con estas hipótesis, podemos suponer que vale el Teorema Central del Límite.
+Siendo así,
+$$
+\big(\Re(A)\big) , \big(\Im(A)\big) \rightarrow \mathcal N(\mathbb{0}, \sigma^2 \mathbb 1 / 2),
+$$
+que denota una variable aleatoria gaussiana bivariada de médias nulas, independientes, y de varianzas iguales a $\sigma^2/2$.
+
+Con esto, la intensidad sigue una ley Exponencial de media $\sigma^2$, y podemos escribir
+$$
+I \sim \sigma^2 Y,
+$$
+en que $Y\sim E(1)$.
+La variable aleatoria $Y$ se denomina speckle, y $\sigma^2$ retrodispersión.
+
+Veamos a seguir tres densidades con medias diferentes en escala lineal.
+
+```{r ExpDensity_plot}
+colores <- wes_palette("Cavalcanti", 3)
+
+plot(c(0,5), c(0,2), type="n", axes = FALSE, xlab = "Intensidad", ylab = "Densidad Exponencial",
+     main = "Densidades Exponenciales - Escala Lineal")
+axis(1)
+axis(2)
+curve(dexp(x, rate = 2), col=colores[3], lwd=3, from=0, to=5, add=TRUE)
+curve(dexp(x, rate = 1), col=colores[1], lwd=3, add=TRUE)
+curve(dexp(x, rate = 1/3, ), col=colores[2], lwd=3, add=TRUE)
+legend("topright", lwd = c(3,3,3), col = colores, legend = c("Media 1", "Media 3", "Media 0.1"))
+```
+
+Veamos ahora las mismas densidades en escala semilogarítmica.
+```{r ExpDensity_plotlog}
+plot(c(0,5), c(10^(-5),10), type="n", axes = FALSE, log="y", xlab = "Intensidad", ylab = "Densidad Exponencial",
+     main = "Densidades Exponenciales - Escala Semilogarítmica")
+axis(1)
+axis(2)
+curve(dexp(x, rate = 2), col=colores[3], lwd=3, from=0.001, to=5, add=TRUE)
+curve(dexp(x, rate = 1), col=colores[1], lwd=3, add=TRUE)
+curve(dexp(x, rate = 1/3), col=colores[2], lwd=3, add=TRUE)
+legend("bottomleft", lwd = c(3,3,3), col = colores, legend = c("Media 1", "Media 3", "Media 0.1"))
+```
+
+Es importante ver siempre las densidades de los modelos para datos SAR en ambas escalas.
+La escala semilogarítmica revela el comportamiento del modelo para valores muy grandes.
+
+La relación señal-ruido de una ley exponencial de media $\sigma^2$ se puede medir por la recíproca del cuadrado del coeficiente de variación, que en la literatura SAR se denomina ``número de looks''.
+Como vale que si $Z\sim E(\sigma^2)$, entonces su esperanza y varianza están dadas por $\text{E}(Z)=\sigma^2$ y $\text{Var}(Z)=\sigma^4$, respectivamente; luego el coeficiente de variación es $\text{CV}(Z) = \sigma^4/(\sigma^2)^2$ y el número de looks es $1$.
+
+Para mitigar el efecto del speckle, se suele promediar $L$ observaciones (idealmente independientes) del mismo blanco.
+Así siendo, se tiene una observación en intensidad ``multilook'':
+$$
+I^{(L)} = \frac1L\sum_{\ell=1}^L \sigma^2 Y_\ell=\sigma^2 \frac1L\sum_{\ell=1}^L  Y_\ell.
+$$
+Admitiendo que $\sigma^2$ permanece constante, podemos modelar $I^{(L)}$ como una variable aleatoria gama de media unitaria y parámetro de forma $L$, multiplicada por $\sigma^2$.
+Con esto, $I^{(L)}$ sigue una ley gama de media $\sigma^2$ y parámetro de forma $L$.
+Denotaremos esta situación $Z\sim \Gamma(\sigma^2,L)$.
+La varianza de $Z$ es $\text{Var}(Z)=\sigma^4/L$, con lo que el número de looks pasa a ser $L$.
+
+En general, el número de looks no es conocido.
+Se puede estimar de varias formas, pero la más simple es como la razón entre el cuadrado de la media muestral y la varianza muestral, ambas calculadas sobre una muestra de datos donde valgan las hipótesis discutidas.
+A cualquier estimador del número de looks se lo denomina ``número equivalente de looks''.
+
+## A2 -- El modelo multiplicativo y distribuciones de intensidad
+
+Según el modelo multiplicativo elemental (para áreas sin textura), la intensidad se puede modelar con una distribución gama de media $\sigma^2$ y parámetro de forma $L$: $Z = \sigma^2 Y\sim \sigma^2 \Gamma(1,L)$.
+Nos interesa $\sigma^2$, mientras que $Y$ interfiere y, por ende, se considera ruido.
+
+Diversos factores pueden hacer que $\sigma^2$ no se mantenga constante para todos los píxeles del área observada, aún cuando se trate de un mismo tipo de blanco de la escena (blanco homogéneo).
+En ese caso, se puede modelar $\sigma^2$ como otra variable aleatoria, independiente de $Y$.
+
+
+## A2 -- El modelo multiplicativo y distribuciones de intensidad
+
+## T1 -- Introducción
+
+R é um programa livre e um ambiente computacional de exploração de gráficos e
+análise de dados (Chambers 6
+, 2008). Ele é útil para qualquer pessoa que usa e interpreta
+dados, das seguintes maneiras:
+
+• Super-calculadora;  
+• Ambiente com diversos pacotes estatísticos;  
+• Ferramenta de gráficos de alta qualidade;  
+• Linguagem de programação multi-uso.  
+
+O R é utilizado para explorar, analisar e compreender os dados epidemiológicos. Os
+dados podem ser importados de fontes como, por exemplo, o DATASUS 1 ou o IBGE 2
+em planilhas de Excel.
+
+
+### Como Instalar o R
+O R é um software livre para computação estatística e construção de gráficos que pode ser baixado e distribuído
+gratuitamente de acordo com a licença GNU.
+O R está disponível para as plataformas UNIX, Windows e MacOS. 
+
+O R é case-sensitive, isto é, ele diferencia letras maiúsculas de minúsculas, portanto A é diferente de a. O
+separador de casas decimais é ponto ".". A vírgula é usada para separar argumentos (informações). Não é
+recomendado o uso de acentos em palavras (qualquer nome que for salvar em um computador, não só no R,
+evite usar acentos. Acentos são comandos usados em programação e podem causar erros, por exemplo, em
+documentos do word e excel).
+
+### Demonstrações
+Algumas funções do R possuem demonstrações de uso. Estas demonstrações podem ser vistas
+usando a função demo(). Vamos ver algumas demonstrações de gráficos que podem ser feitos no R. Digite
+o seguinte na linha de comandos:  
+> demo(graphics) # Vai aparecer uma mensagem pedindo que você tecle Enter para
+prosseguir, depois clique na janela do gráfico para ir passando os exemplos.  
+> demo(persp)  
+> demo(image)  
+
+### Pacotes do R
+O R é um programa leve (ocupa pouco espaço e memória) e geralmente roda rápido, até em computadores
+não muito bons. Isso porque ao instalarmos o R apenas as configurações mínimas para seu funcionamento
+básico são instaladas (pacotes que vem na instalação “base”). Para realizar tarefas mais complicadas pode ser
+necessário instalar pacotes adicionais (packages). 
+
+### Como usar um pacote do R
+Não basta apenas instalar um pacote. Para usá-lo é necessário "carregar" o pacote sempre que você abrir
+o R e for usá-lo. Use a função library para rodar um pacote. Por exemplo: Digite library(vegan)
+na linha de comandos do R.
+
+library(vegan) # Após isso as funcionalidades do vegan estarão prontas para serem
+usadas. Lembre-se que sempre que abrir o R será necessário carregar o pacote novamente.
+
+### Como citar o R, ou um pacote do R em publicações
+No R existe um comando que mostra como citar o R ou um de seus pacotes. Veja como fazer:
+
+citation() # Mostra como citar o R
+To cite R in publications use:
+R Development Core Team (2011). R: A language and environment for statistical computing. R Foundation
+for Statistical Computing, Vienna, Austria. ISBN 3-900051-07-0, URL http://www.R-project.org/.
+Veja que na parte com o nome dos autores aparece "R development core team", isso está correto, cite o R
+desta forma. Algumas pessoas não sabem disso e citam o R com autor Anônimo, isto tira o crédito do time.
+
+Para citar um pacote, por exemplo o vegan, basta colocar o nome do pacote entre aspas.
+
+citation("vegan")
+
+
+## T2 -- Lectura de datos
+
+## T3 -- Operaciones basicas en R
+
+### Nociones de programación en R
+
+Os comandos (scripts em linguagem R) devem ser explicitados na linha de comando
+(console) ou por meio de um editor de texto (a ser comentado depois). Veja os exemplos
+de operações matemáticas (Quadro 2):
+
+Quadro 2: R como super-calculadora.
+
+%Carregando pacote para tabela knitr & kableExtra
+```{r}
+require(knitr) 
+require(kableExtra)
+if(!require(data.table)){install.packag
+  es("data.table"); require(data.table)}
+
+#Criando conjunto de dados
+
+#OperacoesR <- data.table(Operador = c( "+", "-", "*", "/", "^", "abs", "exp", "log", "sqrt", "rnorm"),
+#                        Descricao = c( "Adicao", "Subtracao", "Multiplicacao", "Divisao", "Exponenciacao", "Valor Absoluto", #"log logaritmo (default \'e log natural)", "Raiz quadrada", "sorteia 100.000 valores de uma Normal"),
+#                        Exemplos = c( "5+4", "5-4", "5*4", "5/4", "5^4", "abs(-5)", "exp(5)", "log(exp(5)", "sqrt(64)", #"rnorm(100000)"))
+Tabela <- data.table(Operador = c("+", "-","*","/", "^", "abs", "exp", "log", "sqrt", "rnorm" ),
+                     Descricao = c("Adicao", "Subtracao", "Multiplicacao", "Divisao", "Exponenciacao", "Valor Absoluto", "log logaritmo (default \'e log natural)", "Raiz quadrada", "sorteia 100.000 valores de uma Normal"),
+                     Exemplos = c("5+4", "5-4", "5*4", "5/4", "5^4", "abs(-5)", "exp(5)", "log(exp(5)", "sqrt(64)", "rnorm(100000)"))
+                    
+kable(Tabela, booktabs = T)
+
+```                        
+
+### O R como calculadora
+O forma de uso mais básica do R é usá-lo como calculadora. Os operadores matemáticos básicos são:  
++ para soma, - subtração, * multiplicação, / divisão e ^ exponenciação. Digite as seguintes operações na
+linha de comandos do R:  
+
+%Carregando pacote para tabela knitr & kableExtra
+```{r}
+ 2+2  
+ 2*2  
+ 2/2  
+ 2-2  
+ 2^2  
+```
+Use parênteses para separar partes dos cálculos, por exemplo, para fazer a conta 4+16, dividido por 4,
+elevado ao quadrado:
+```{r}
+ ((4+16)/4)^2  
+
+```
+### Funções do R
+O R tem diversas funções que podemos usar para fazer os cálculos desejados. O uso básico de uma
+função é escrever o nome da função e colocar os argumentos entre parênteses, por exemplo:
+função(argumentos). função especifica qual função irá usar e argumentos especifica os
+argumentos que serão avaliados pela função. Não se assuste com esses nomes, com um pouco de pratica eles
+se tornarão triviais.  
+Antes de usar uma função precisamos aprender como usá-la. Para isso vamos aprender como abrir e usar
+os arquivos de ajuda do R.
+
+
+### Objetos do R (O que são?):
+O que são os Objetos do R? Existem muitos tipos de objetos no R que só passamos a conhecê-los bem
+com o passar do tempo. Por enquanto vamos aprender os tipos básicos de objetos.  
+a) vetores: uma seqüência de valores numéricos ou de caracteres (letras, palavras).  
+b) matrizes: coleção de vetores em linhas e colunas, todos os vetores dever ser do mesmo tipo (numérico
+ou de caracteres).  
+c) dataframe: O mesmo que uma matriz, mas aceita vetores de tipos diferentes (numérico e caracteres).  
+Geralmente nós guardamos nossos dados em objetos do tipo data frame, pois sempre temos variáveis
+numéricas e variáveis categóricas (por exemplo, largura do rio e nome do rio, respectivamente).  
+d) listas: conjunto de vetores, dataframes ou de matrizes. Não precisam ter o mesmo comprimento, é a
+forma que a maioria das funções retorna os resultados.  
+e) funções: as funções criadas para fazer diversos cálculos também são objetos do R.  
+No decorrer da apostila você verá exemplos de cada um destes objetos.   
+
+
+### Como criar objetos
+####Objetos vetores com valores numéricos
+Vamos criar um conjunto de dados de contém o número de espécies de aves (riqueza) coletadas em 10
+locais. As riquezas são 22, 28, 37, 34, 13, 24, 39, 5, 33, 32.  
+```{r} 
+ aves<-c(22,28,37,34,13,24,39,5,33,32)  
+```
+O comando <- (sinal de menor e sinal de menos) significa assinalar (assign). Indica que tudo que vem
+após este comando será salvo com o nome que vem antes. É o mesmo que dizer "salve os dados a seguir com
+o nome de aves".  
+
+A letra c significa concatenar (colocar junto). Entenda como "agrupe os dados entre parênteses dentro do
+objeto que será criado" neste caso no objeto aves.  
+
+Para ver os valores (o conteúdo de um objeto), basta digitar o nome do objeto na linha de comandos.
+ aves  
+ 
+A função length fornece o número de observações (n) dentro do objeto.  
+```{r} 
+ length(aves)  
+```
+Objetos vetores com caracteres (letras, variáveis categóricas).  
+
+Também podemos criar objetos que contêm letras ou palavras ao invés de números. Porem, as letras ou
+palavras devem vir entre aspas " ".  
+```{r} 
+ letras<-c("a","b","c","da","edw")  
+7  
+ letras  
+ 
+ palavras<-c("Manaus","Boa Vista","Belém","Brasília") 
+ 
+ palavras    
+ 
+```
+
+Crie um objeto "misto", com letras e com números. Funciona? Esses números realmente são números?  
+
+Note a presença de aspas, isso indica que os números foram convertidos em caracteres. Evite criar vetores
+"mistos", a menos que tenha certeza do que está fazendo.  
+
+#### Operações com vetores
+
+Podemos fazer diversas operações usando o objeto aves, criado acima.
+```{r}
+max(aves) #valor máximo contido no objeto aves
+min(aves) #valor mínimo
+sum(aves) #Soma dos valores de aves
+aves^2 #…
+aves/10
+```
+Agora vamos usar o que já sabemos para calcular a média dos dados das aves.
+```{r}
+n.aves<-length(aves)             # número de observações (n)
+media.aves<-sum(aves)/n.aves                        #média
+```
+Para ver os resultados basta digitar o nome dos objetos que você salvou
+```{r}
+n.aves # para ver o número de observações (n)
+media.aves # para ver a média
+```
+Você não ficará surpreso em saber que o R já tem uma função pronta para calcular a média.
+```{r}
+mean(aves)
+```
+
+### Acessar valores dentro de um objeto [colchetes]
+Caso queira acessar apenas um valor do conjunto de dados use colchetes []. Isto é possível porque o R
+salva os objetos como vetores, ou seja, a sequencia na qual você incluiu os dados é preservada. Por exemplo,
+vamos acessar o quinto valor do objeto aves.
+```{r}
+aves[5] # Qual o quinto valor de aves?
+palavras[3] # Qual a terceira palavra?
+```
+Para acessar mais de um valor use c para concatenar dentro dos colchetes [c(1,3,...)]:
+```{r}
+aves[c(5,8,10)] # acessa o quinto, oitavo e décimo valores
+```
+Para excluir um valor, ex: o primeiro, use:
+```{r}
+aves[-1] # note que o valor 22, o primeiro do objeto aves, foi excluído
+
+```
+Caso tenha digitado um valor errado e queira corrigir o valor, especifique a posição do valor e o novo valor.
+Por exemplo, o primeiro valor de aves é 22, caso estivesse errado, ex: deveria ser 100, basta alterarmos o valor
+da seguinte maneira.
+```{r}
+aves[1]<-100 # O primeiro valor de aves deve ser 100
+aves
+aves[1]<-22 # Vamos voltar ao valor antigo
+```
+
+###Gerar seqüências (usando : ou usando seq)
+
+: (dois pontos)
+Dois pontos " : " é usado para gerar seqüências de um em um, por exemplo a seqüência de 1 a 10: 
+```{r}
+1:10 # O comando : é usado para especificar seqüências.
+5:16 # Aqui a seqüência vai de 5 a 16
+```
+
+seq
+A função seq é usada para gerar seqüências especificando os intervalos.
+Vamos criar uma seqüência de 1 a 10 pegando valores de 2 em 2.
+```{r}
+seq(1,10,2) #seq é a função para gerar seqüências, o default é em intervalos de 1.
+```
+A função seq funciona assim:
+
+seq(from = 1, to = 10, by = 2 ), seqüência(de um, a dez, em intervalos de 2)
+```{r}
+seq(1,100,5) #seqüência de 1 a 100 em intervalos de 5
+seq(0.01,1,0.02)
+```
+### Gerar repetições (rep)
+rep
+Vamos usar a função rep para repetir algo n vezes.
+```{r}
+rep(5,10) # repete o valor 5 dez vezes
+```
+A função rep funciona assim: 
+
+rep(x, times=y) # rep(repita x, y vezes) # onde x é o valor ou conjunto de valores que deve ser
+repetido, e times é o número de vezes)
+```{r}
+rep(2,5)
+rep("a",5) # repete a letra "a" 5 vezes
+rep(1:4,2) # repete a seqüência de 1 a 4 duas vezes
+rep(1:4,each=2) # note a diferença ao usar o comando each=2
+rep(c("A","B"),5) # repete A e B cinco vezes.
+rep(c("A","B"),each=5) # repete A e B cinco vezes.
+rep(c("Três","Dois","Sete","Quatro"),c(3,2,7,4)) # Veja que neste
+```
+caso a primeira parte do comando indica as palavras que devem ser repetidas e a segunda parte indica quantas
+vezes cada palavra deve ser repetida
+
+### Gerar dados aleatórios
+runif (Gerar dados aleatórios com distribuição uniforme)
+
+runif(n, min=0, max=1) # gera uma distribuição uniforme com n valores,
+
+começando em min e terminando em max.
+```{r}
+runif(200,80,100) # gera 200 valores que vão de um mínimo de 80 até um máximo de 100
+temp<-runif(200,80,100)
+hist(temp) # Faz um histograma de freqüências dos valores
+```
+rnorm (Gerar dados aleatórios com distribuição normal)
+
+rnorm(n, mean=0, sd=1) # gera n valores com distribuição uniforme, com média 0 e desvio padrão 1.
+```{r}
+rnorm(200,0,1) # 200 valores com média 0 e desvio padrão 1
+temp2<-rnorm(200,8,10) # 200 valores com média 8 e desvio padrão 10
+hist(temp2) # Faz um histograma de frequências dos valores
+```
+Veja o help da função ?Distributions para conhecer outras formar de gerar dados aleatórios com
+diferentes distribuições.
+
+### Fazer amostras aleatórias
+A função sample
+A função sample é utilizada para realizar amostras aleatórias e funciona assim:
+sample(x, size=1, replace = FALSE)# onde x é o conjunto de dados do qual as
+amostras serão retiradas, size é o número de amostras e replace é onde você indica se a amostra deve ser feita com reposição (TRUE) ou sem reposição (FALSE).
+```{r}
+sample(1:10,5) # tira 5 amostras com valores entre 1 e 10
+```
+Como não especificamos o argumento replace o padrão é considerar que a amostra é sem reposição
+(= FALSE).
+
+sample(1:10,15) # erro, amostra maior que o conjunto de valores, temos 10 valores (1 a 10)
+
+portanto não é possível retirar 15 valores sem repetir nenhum!
+```{r}
+
+sample(1:10,15,replace=TRUE) # agora sim!
+```
+Com a função sample nós podemos criar varios processos de amostragem aleatória. Por exemplo,
+vamos criar uma moeda e "jogá-la" para ver quantas caras e quantas coroas saem em 10 jogadas.
+```{r}
+moeda<-c("CARA","COROA") # primeiro criamos a moeda
+```
+sample(moeda,10)
+
+ops! Esqueci de colocar replace=TRUE
+```{r}
+sample(moeda,10,replace=TRUE) # agora sim
+```
+
+
+
+## T4 -- Visualizacion de imagenes, mejoria de contraste
+
+## T5 -- Analisis estadistico descriptivo 
+
+## T6 -- Analisis estadistico cuantitativo
+
+## A3 -- Filtros reductores de speckle
+
+## A4 -- Evaluacion de filtros
+
+# Parte II: PolSARpro
+
+## T7 -- Introduccion
+
+### PolSARpro Version 5.1
+
+
+## T8 -- Lectura de datos
+
+## A5 -- Datos polarimetricos: distribuciones 
+
+## A6 -- Descomposicion H-alfa
+
+## A7 -- Clasificacion
+
+## T9 -- Operaciones en PolSARpro: filtrado de speckle, descomposiciones polarimetricas, clasificacion
+
+## T10 -- Exportacion
+
+## A8 -- Tests de hipotesis y deteccion de cambios
