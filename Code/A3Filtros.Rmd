@@ -121,7 +121,7 @@ lines(barras_1Look[,214])
 lines(Filtrado_Mediana5x5[, 214], lwd=3, col=colores[1])
 lines(Filtrado_Media5x5[, 214], lwd=3, col=colores[3])
 lines(barras[, 214],col=colores[2])
-legend("top", lwd = c(3,3,3,1), col = c(colores,1), ncol=4, legend = c("Mediana", "Verdad", "Media", "Speckle"))
+legend("top", lwd = c(3,3,3,1), col = c(1, colores[c(1,3,2)]), ncol=4, legend = c("Speckle", "Mediana", "Media", "Verdad"))
 ```
 
 El efecto de la reducción de ruido es evidente, y también que ambos filtros tienden a reducir el valor medio.
@@ -135,7 +135,7 @@ lines(barras_1Look[,214])
 lines(Filtrado_Mediana5x5[, 214], lwd=3, col=colores[1])
 lines(Filtrado_Media5x5[, 214], lwd=3, col=colores[3])
 lines(barras[, 214],col=colores[2])
-legend("top", lwd = c(3,3,3,1), col = c(colores, 1), ncol=4, legend = c("Mediana", "Verdad", "Media", "Speckle"))
+legend("top", lwd = c(3,3,3,1), col = c(1, colores[c(1,3,2)]), ncol=4, legend = c("Speckle", "Mediana", "Media", "Verdad"))
 ```
 
 La escala semilogarítmica muestra claramente el efecto de los filtros.
@@ -143,3 +143,5 @@ La escala semilogarítmica muestra claramente el efecto de los filtros.
 El sesgo de subestimación probablemente se deba a que la columna 214 es fronteriza entre una barra (clara, valor alto) y el fondo (oscuro).
 Los filtros actúan localmente sobre ventanas de tamaño $5\times5$, por lo tanto diez valores serán oscuros y quince claros.
 El resultado de ambos filtros en esta columna es resultado de una mezcla de observaciones.
+
+Veamos ahora una línea central de la imagen

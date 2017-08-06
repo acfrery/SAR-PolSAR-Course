@@ -94,3 +94,40 @@ axis(1)
 axis(2)
 lines(barras_1Look[, 214], col=colores[1])
 lines(barras[, 214],col=colores[2])
+
+Filtro_Media <- function(imagen, Lado) {
+  salida <- imagen
+  dimensiones <- dim(imagen)
+  margen <- (Lado+1)/2
+  lados <- (Lado-1)/2
+  for(i in margen:(dimensiones[1]-margen))
+      for(j in margen:(dimensiones[2]-margen)) {
+        salida[i,j] <- mean(imagen[(i-lados):(i+lados), (j-lados):(j+lados)])
+      }
+  return(salida)
+}
+
+Filtro_Mediana <- function(imagen, Lado) {
+  salida <- imagen
+  dimensiones <- dim(imagen)
+  margen <- (Lado+1)/2
+  lados <- (Lado-1)/2
+  for(i in margen:(dimensiones[1]-margen))
+    for(j in margen:(dimensiones[2]-margen)) {
+      salida[i,j] <- median(imagen[(i-lados):(i+lados), (j-lados):(j+lados)])
+    }
+  return(salida)
+}
+
+Filtrado_Media5x5 <- Filtro_Media(barras_1Look, 5)
+plot(imagematrix(equalize(Filtrado_Media5x5)))
+Filtrado_Mediana5x5 <- Filtro_Mediana(barras_1Look, 5)
+plot(imagematrix(equalize(Filtrado_Mediana5x5)))
+
+plot(Filtrado_Media5x5[, 214], type="n", xlab = "Línea", ylab = "Valores observados", axes = FALSE,
+     main = "Valores en la Columna 214: verdad y filtrado por la media y la mediana")
+axis(1)
+axis(2)
+lines(Filtrado_Mediana5x5[, 214], lwd=3, col=colores[1])
+lines(Filtrado_Media5x5[, 214], lwd=3, col=colores[3])
+lines(barras[, 214],col=colores[2])
