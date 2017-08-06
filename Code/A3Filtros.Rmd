@@ -1,6 +1,145 @@
 ---
-title: ""
-output: html_notebook
+title: ''
+output:
+  html_document: default
+  html_notebook: default
 ---
 
 ## A3 -- Filtros reductores de speckle
+
+Una de las áreas más activas en Procesamiento de Imágenes y Teledetección es la búsqueda por filtros reductores de speckle.
+Recomendamos la lectura del tutorial [@TutorialSpeckleReductionSAR].
+
+Un buen filtro de speckle tiene que:
+
+- mejorar la relación señal/ruido,
+- preservar pequeños detalles y bordes, y
+- preservar la información radiométrica de los blancos.
+
+Veremos un ejemplo básico de la clase de filtros convolucionales.
+Estos filtros se basan en aplicar una operació de convolución en cada coordenada de la imagen.
+En general, la máscara es fija; esto reduce enormemente la complejidad computacional, pero también limita el poder y la eficacia del filtro.
+
+Usaremos una biblioteca R para operaciones básicas con imágenes: imagematrix; como no está más disponible en los repositorios estándar, la dejamos junto con estos apuntes.
+Usaremos también la librería estándar "tiff".
+
+```{r}
+  source("./imagematrix.R")
+  if(!require(tiff)){install.packages("tiff"); require(tiff)}
+
+```
+
+Esta biblioteca permite leer algunos formatos de imágenes, visualizarlas y hacer operaciones básicas de procesamiento.
+Hay que recordar que los datos tienen que estar en el intervalo $[0,1]$ para que imagematrix los procese.
+
+El primer paso será crear una imagen simulada con speckle.
+Usaremos com verdad una imagen usual en este tipo de estudio: strips.
+
+```{r}
+barras <- readTIFF("strips.tif") # Leemos la imagen de barras
+range(barras) # Verificamos el rango de sus valores
+plot(imagematrix(barras)) # La visualizamos
+```
+
+A imagem strips tem duas classes, uma com valor $0$ y otra con valor $0.8588235$.
+En primer lugar, transformaremos los valores a $0.1$ y $0.9$, y los multiplicaremos por eventos de variables aleatorias independientes e identicamente distribuídas segundo una ley exponencial de media unitaria.
+Transformaremos para el intervalo unitario para fines de visualización, pero mantendremos los valores originales para su procesamiento.
+
+```{r}
+barras <- barras / max(barras) * (.9 - .1) + .1
+barras_1Look <- barras * matrix(data=rexp(n = 256*256, rate = 1), ncol=256, nrow = 256)
+plot(imagematrix(normalize(barras_1Look)))
+```
+
+Es muy poco lo que se ve.
+Tratemos de visualizar ecualizando la imagen.
+
+```{r}
+plot(imagematrix(equalize(barras_1Look)))
+```
+
+Una forma interesante de ver el efecto que el speckle y los ruidos tienen sobre la imagen es la visualización de una línea.
+
+```{r}
+plot(barras_1Look[, 214], type="n", xlab = "Línea", ylab = "Valores observados", axes = FALSE,
+     main = "Valores en la Columna 214: verdad y speckle 1-Look")
+axis(1)
+axis(2)
+lines(barras_1Look[, 214], col=colores[1])
+lines(barras[, 214],col=colores[2])
+```
+
+Definiremos a seguir dos filtros básicos, el de la media y el de la mediana.
+Las funciones admiten como entradas una imagen y el lado (impar) de la ventana.
+
+```{r}
+Filtro_Media <- function(imagen, Lado) {
+  salida <- imagen
+  dimensiones <- dim(imagen)
+  margen <- (Lado+1)/2
+  lados <- (Lado-1)/2
+  for(i in margen:(dimensiones[1]-margen))
+      for(j in margen:(dimensiones[2]-margen)) {
+        salida[i,j] <- mean(imagen[(i-lados):(i+lados), (j-lados):(j+lados)])
+      }
+  return(salida)
+}
+
+Filtro_Mediana <- function(imagen, Lado) {
+  salida <- imagen
+  dimensiones <- dim(imagen)
+  margen <- (Lado+1)/2
+  lados <- (Lado-1)/2
+  for(i in margen:(dimensiones[1]-margen))
+    for(j in margen:(dimensiones[2]-margen)) {
+      salida[i,j] <- median(imagen[(i-lados):(i+lados), (j-lados):(j+lados)])
+    }
+  return(salida)
+}
+```
+
+Los resultados de filtrar con ventanas de tamaño $5\times 5$ la imagen con speckle se muestran a seguir.
+
+```{r}
+Filtrado_Media5x5 <- Filtro_Media(barras_1Look, 5)
+plot(imagematrix(equalize(Filtrado_Media5x5)))
+```
+
+```{r}
+Filtrado_Mediana5x5 <- Filtro_Mediana(barras_1Look, 5)
+plot(imagematrix(equalize(Filtrado_Mediana5x5)))
+```
+
+Veamos a seguir el efecto de los filtros sobre los valores de la columna 214.
+
+```{r}
+  plot(barras_1Look[, 214], type="n", xlab = "Línea", ylab = "Valores observados", axes = FALSE,
+     main = "Columna 214: verdad y filtrado por la media y la mediana (lineal)")
+axis(1)
+axis(2)
+lines(barras_1Look[,214])
+lines(Filtrado_Mediana5x5[, 214], lwd=3, col=colores[1])
+lines(Filtrado_Media5x5[, 214], lwd=3, col=colores[3])
+lines(barras[, 214],col=colores[2])
+legend("top", lwd = c(3,3,3,1), col = c(colores,1), ncol=4, legend = c("Mediana", "Verdad", "Media", "Speckle"))
+```
+
+El efecto de la reducción de ruido es evidente, y también que ambos filtros tienden a reducir el valor medio.
+
+```{r}
+  plot(barras_1Look[, 214], type="n", log="y", xlab = "Línea", ylab = "Valores observados", axes = FALSE,
+     main = "Columna 214: verdad y filtrado por la media y la mediana (semilogarítmico)")
+axis(1)
+axis(2)
+lines(barras_1Look[,214])
+lines(Filtrado_Mediana5x5[, 214], lwd=3, col=colores[1])
+lines(Filtrado_Media5x5[, 214], lwd=3, col=colores[3])
+lines(barras[, 214],col=colores[2])
+legend("top", lwd = c(3,3,3,1), col = c(colores, 1), ncol=4, legend = c("Mediana", "Verdad", "Media", "Speckle"))
+```
+
+La escala semilogarítmica muestra claramente el efecto de los filtros.
+
+El sesgo de subestimación probablemente se deba a que la columna 214 es fronteriza entre una barra (clara, valor alto) y el fondo (oscuro).
+Los filtros actúan localmente sobre ventanas de tamaño $5\times5$, por lo tanto diez valores serán oscuros y quince claros.
+El resultado de ambos filtros en esta columna es resultado de una mezcla de observaciones.

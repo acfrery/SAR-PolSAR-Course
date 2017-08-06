@@ -3,6 +3,10 @@ title: "Procesamiento y Análisis de Imágenes PolSAR usando R"
 output:
   html_document: default
   html_notebook: default
+  pdf_document: default
+  
+bibliography: referencias.bibtex
+
 ---
 
 ```{r child = 'A1Formacion.Rmd'}

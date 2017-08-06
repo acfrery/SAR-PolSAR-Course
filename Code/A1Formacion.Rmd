@@ -1,6 +1,8 @@
 ---
-title: ""
-output: html_notebook
+title: ''
+output:
+  html_document: default
+  html_notebook: default
 ---
 # Parte I: Elementos de análisis estadístico de imágenes PolSAR usando R
 
@@ -31,8 +33,8 @@ $$
 Hasta ahora no podemos afirmar nada sobre las propiedades de $I$.
 
 ```{r}
-if(!require(shape)){install.packages("shape"); require("shape")}
-if(!require(wesanderson)){install.packages("wesanderson"); require("wesanderson")}
+if(!require(shape)){install.packages("shape"); require(shape)}
+if(!require(wesanderson)){install.packages("wesanderson"); require(wesanderson)}
 
 set.seed(1234567890, kind="Mersenne-Twister")
 factor.reduccion <- .5
@@ -73,9 +75,9 @@ Supongamos también que las fases $\phi_n$ pueden ser descriptas por variables a
 Con estas hipótesis, podemos suponer que vale el Teorema Central del Límite.
 Siendo así,
 $$
-\big(\Re(A)\big) , \big(\Im(A)\big) \rightarrow \mathcal N(\mathbb{0}, \sigma^2 \mathbb 1 / 2),
+\big(\Re(A) , \Im(A)\big) \rightarrow \mathcal N(\mathbb{0}, \sigma^2 \mathbb 1 / 2),
 $$
-que denota una variable aleatoria gaussiana bivariada de médias nulas, independientes, y de varianzas iguales a $\sigma^2/2$.
+que denota una variable aleatoria gaussiana bivariada de medias nulas, independientes, y de varianzas iguales a $\sigma^2/2$.
 
 Con esto, la intensidad sigue una ley Exponencial de media $\sigma^2$, y podemos escribir
 $$
@@ -83,6 +85,9 @@ I \sim \sigma^2 Y,
 $$
 en que $Y\sim E(1)$.
 La variable aleatoria $Y$ se denomina speckle, y $\sigma^2$ retrodispersión.
+
+La media y varianza de $I$ vienen dadas por $\sigma^2$ y por $\sigma^4$, respectivamente.
+El coeficiente de variación de $I$ es $\text{CV}(I) = \sqrt{\text{Var}(I)}/\text{E}({I}) = 1$.
 
 Veamos a seguir tres densidades con medias diferentes en escala lineal.
 
@@ -115,7 +120,7 @@ Es importante ver siempre las densidades de los modelos para datos SAR en ambas 
 La escala semilogarítmica revela el comportamiento del modelo para valores muy grandes.
 
 La relación señal-ruido de una ley exponencial de media $\sigma^2$ se puede medir por la recíproca del cuadrado del coeficiente de variación, que en la literatura SAR se denomina ``número de looks''.
-Como vale que si $Z\sim E(\sigma^2)$, entonces su esperanza y varianza están dadas por $\text{E}(Z)=\sigma^2$ y $\text{Var}(Z)=\sigma^4$, respectivamente; luego el coeficiente de variación es $\text{CV}(Z) = \sigma^4/(\sigma^2)^2$ y el número de looks es $1$.
+Como vale que si $Z\sim E(\sigma^2)$, entonces el número de looks es $1$.
 
 Para mitigar el efecto del speckle, se suele promediar $L$ observaciones (idealmente independientes) del mismo blanco.
 Así siendo, se tiene una observación en intensidad ``multilook'':
@@ -123,7 +128,43 @@ $$
 I^{(L)} = \frac1L\sum_{\ell=1}^L \sigma^2 Y_\ell=\sigma^2 \frac1L\sum_{\ell=1}^L  Y_\ell.
 $$
 Admitiendo que $\sigma^2$ permanece constante, podemos modelar $I^{(L)}$ como una variable aleatoria gama de media unitaria y parámetro de forma $L$, multiplicada por $\sigma^2$.
-Con esto, $I^{(L)}$ sigue una ley gama de media $\sigma^2$ y parámetro de forma $L$.
+La densidad que caracteriza la distribución de $Y=L^{-1}\sum_{\ell=1}^L  Y_\ell$ es
+$$
+f_Y(y;L) = \frac{L^L}{\Gamma(L)} \exp\{-LY\}.
+$$
+Primero definimos la función de densidad en la parametrización que usaremos para datos SAR.
+
+```{r}
+dgammaSAR <- function(x, Looks, mean, log=FALSE) {
+  dgamma(x, shape=Looks, rate=Looks/mean, log=log)
+}
+```
+
+Ahora visualizamos tres densidades del speckle en escala lineal:
+```{r GammaDensity_Linear}
+plot(c(0,5), c(0,1), type="n", axes = FALSE, xlab = "Intensidad", ylab = "Densidades Gama de Media Unitaria",
+     main = "Densidades del Speckle - Escala Lineal")
+axis(1)
+axis(2)
+curve(dgammaSAR(x, 1, 1), col=colores[3], lwd=3, from=0, to=5, add=TRUE)
+curve(dgammaSAR(x, 3, 1), col=colores[2], lwd=3, add=TRUE)
+curve(dgammaSAR(x, 5, 1), col=colores[1], lwd=3, add=TRUE)
+legend("topright", lwd = c(3,3,3), col = colores[c(3,2,1)], legend = c("L = 1", "L = 3", "L = 5"))
+```
+
+y en escala semilogarítmica:
+``` {r GammaDensity_Log}
+plot(c(0,5), c(10^(-6),1), type="n", axes = FALSE, log = "y", xlab = "Intensidad", ylab = "Densidades Gama de Media Unitaria",
+       main = "Densidades del Speckle - Escala Semilogarítmica")
+axis(1)
+axis(2)
+curve(dgammaSAR(x, 1, 1), col=colores[3], lwd=3, from=0, to=5, add=TRUE)
+curve(dgammaSAR(x, 3, 1), col=colores[2], lwd=3, add=TRUE)
+curve(dgammaSAR(x, 5, 1), col=colores[1], lwd=3, add=TRUE)
+legend("bottomleft", lwd = c(3,3,3), col = colores[c(3,2,1)], legend = c("L = 1", "L = 3", "L = 5"))
+```
+
+Al multiplicar el speckle por la constante $\sigma^2$, $I^{(L)}$ sigue una ley gama de media $\sigma^2$ y parámetro de forma $L$.
 Denotaremos esta situación $Z\sim \Gamma(\sigma^2,L)$.
 La varianza de $Z$ es $\text{Var}(Z)=\sigma^4/L$, con lo que el número de looks pasa a ser $L$.
 
