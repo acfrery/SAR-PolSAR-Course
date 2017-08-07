@@ -58,7 +58,7 @@ Tratemos de visualizar ecualizando la imagen.
 plot(imagematrix(equalize(barras_1Look)))
 ```
 
-Una forma interesante de ver el efecto que el speckle y los ruidos tienen sobre la imagen es la visualización de una línea.
+Una forma interesante de ver el efecto que el speckle y los filtros tienen sobre la imagen es la visualización de una línea.
 
 ```{r}
 plot(barras_1Look[, 214], type="n", xlab = "Línea", ylab = "Valores observados", axes = FALSE,
@@ -114,7 +114,7 @@ Veamos a seguir el efecto de los filtros sobre los valores de la columna 214.
 
 ```{r}
 plot(barras_1Look[, 214], type="n", xlab = "Línea", ylab = "Valores observados", axes = FALSE,
-     main = "Columna 214: verdad y filtrado por la media y la mediana (lineal)")
+     main = "Columna 214: Verdad y filtrado por la media y la mediana (lineal)")
 axis(1)
 axis(2)
 lines(barras_1Look[,214])
@@ -128,7 +128,7 @@ El efecto de la reducción de ruido es evidente, y también que ambos filtros ti
 
 ```{r}
 plot(barras_1Look[, 214], type="n", log="y", xlab = "Línea", ylab = "Valores observados", axes = FALSE,
-     main = "Columna 214: verdad y filtrado por la media y la mediana (semilogarítmico)")
+     main = "Columna 214: Verdad y filtrado por la media y la mediana (semilogarítmico)")
 axis(1)
 axis(2)
 lines(barras_1Look[,214])
@@ -149,17 +149,7 @@ Primero en escala lineal.
 
 ```{r}
 plot(barras_1Look[128, ], type="n", xlab = "Línea", ylab = "Valores observados", axes = FALSE,
-     main = "Línea 128: verdad y filtrado por la media y la mediana (lineal)")
-axis(1)
-axis(2)
-lines(barras_1Look[128, ])
-lines(Filtrado_Mediana5x5[128, ], lwd=3, col=colores[1])
-lines(Filtrado_Media5x5[128, ], lwd=3, col=colores[3])
-lines(barras[128, ],col=colores[2])
-legend("top", lwd = c(1,3,3,1), col = c(1, colores[c(1,3,2)]), ncol=4, legend = c("Speckle", "Mediana", "Media", "Verdad"))
-
-plot(barras_1Look[128, ], type="n", log="y", xlab = "Columna", ylab = "Valores observados", axes = FALSE,
-     main = "Línea 128: verdad y filtrado por la media y la mediana (semilogarítmico)")
+     main = "Línea 128: Verdad y filtrado por la media y la mediana (lineal)")
 axis(1)
 axis(2)
 lines(barras_1Look[128, ])
@@ -173,7 +163,7 @@ Y después en escala semilogarítmica.
 
 ```{r}
 plot(barras_1Look[128, ], type="n", log="y", xlab = "Columna", ylab = "Valores observados", axes = FALSE,
-     main = "Línea 128: verdad y filtrado por la media y la mediana (semilogarítmico)")
+     main = "Línea 128: Verdad y filtrado por la media y la mediana (semilogarítmico)")
 axis(1)
 axis(2)
 lines(barras_1Look[128, ])
@@ -182,3 +172,4 @@ lines(Filtrado_Media5x5[128, ], lwd=3, col=colores[3])
 lines(barras[128, ],col=colores[2])
 legend("top", lwd = c(1,3,3,1), col = c(1, colores[c(1,3,2)]), ncol=4, legend = c("Speckle", "Mediana", "Media", "Verdad"))
 ```
+
