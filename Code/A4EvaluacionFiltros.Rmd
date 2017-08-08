@@ -3,4 +3,33 @@ title: ""
 output: html_notebook
 ---
 
-## A4 -- Evaluacion de filtros
+## A4 -- Evaluación de filtros
+La evaluación de filtros para imágenes SAR es un tema de pesquisa tan activo como el de la propuesta de estos filtros.
+Frecuentemente, vemos artículos que proponen un filtro y una metodología para evaluarlo.
+Aún no hay consenso en la comunidad sobre una única forma de evaluar el desempeño de filtros reductores de speckle, pero sí uno desea que 
+
+- mejoren la relación señal/ruido,
+- preserven pequeños detalles y bordes, y
+- preserven la información radiométrica de los blancos.
+
+El primer punto suele evaluarse comparando el número equivalente de looks entre la imagen ruidosa y la filtrada.
+El tercer punto puede tratarse calculando médias de observaciones entre ambas imágenes.
+El segundo punto, frequentemente, es tratado de forma subjetiva a través de la observación del resultado producido por el filtro.
+
+Veremos a seguir una forma unificada y cuantitativa de evaluar el desempeño de filtros de speckle.
+Este tratamiento se basa en las propiedades estadísticas de la formación de imágenes SAR.
+
+Recordemos que bajo el modelo multiplicativo la imagen observada $Z$ puede ser descripta como el producto de dos campos aleatorios: uno debido al speckle ($Y$) y otro al backscatter ($X$).
+El speckle es un conjunto de variables aleatorias independientes e idénticamente distribuídas según una ley gama de media unitaria y parámetro de forma $L$, el número de looks (que, en general, es desconocido).
+No sabemos, a priori, nada sobre el campo de variables aleatorias que describen el backscatter.
+
+Denotemos $\Psi$ la operación de filtrado.
+El filtrado tiene por objetivo estimar el backscatter a partir de los datos observados, y por lo tanto resulta natural utilizar notación de estimación: la imagen filtrada $\widehat X$ es un estimador de $X$, que se basa en el retorno, esto es, $\widehat X = \Psi(Z)$.
+Si computamos el cociente punto a punto de la imagen original (ruidosa) y la imagen filtrada, tendremos la imagen cociente $I=Z/\widehat X$.
+Esta imagen cociente será un importante instrumento para evaluar el desempeño de filtros de speckle.
+
+Si existiera, el filtro ideal $\widetilde \Psi$ produciría una imagen filtrada $\widetilde X$ idéntica al backscatter $X$.
+Al computar el cociente ideal tenemos $\widetilde I = Z/\widetilde X = XY/X=Y$ tendríamos $Y$, speckle puro.
+Así siendo, una forma de medir cuán alejado el filtro $\Psi$ está del filtro ideal $\widetilde \Psi$ es medir el alejamiento de la imagen cociente $I$ de la imagen cociente ideal $\widetilde I$, una colección de variables aleatorias independientes e identicamente distribuídas según una ley gama de media unitaria y parámetro de forma igual al número de looks original.
+
+Gomez et al. [@UnassistedQuantitativeEvaluationDespecklingFilters] se basan en esa idea para proponer una medida de calidad de filtros de speckle.

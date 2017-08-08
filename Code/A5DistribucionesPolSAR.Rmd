@@ -4,3 +4,5 @@ output: html_notebook
 ---
 
 ## A5 -- Datos polarimetricos: distribuciones 
+
+Una importante referencia para este tema es [@SurveyStatisticalPolSAR].

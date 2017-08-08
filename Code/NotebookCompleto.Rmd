@@ -60,3 +60,5 @@ bibliography: referencias.bibtex
 
 ```{r child = 'A8DeteccionCambios.Rmd'}
 ```
+
+# Referencias
