@@ -124,10 +124,42 @@ plot(imagematrix(equalize(Filtrado_Media5x5)))
 Filtrado_Mediana5x5 <- Filtro_Mediana(barras_1Look, 5)
 plot(imagematrix(equalize(Filtrado_Mediana5x5)))
 
-plot(Filtrado_Media5x5[, 214], type="n", xlab = "Línea", ylab = "Valores observados", axes = FALSE,
-     main = "Valores en la Columna 214: verdad y filtrado por la media y la mediana")
+plot(barras_1Look[, 214], type="n", xlab = "Línea", ylab = "Valores observados", axes = FALSE,
+     main = "Columna 214: verdad y filtrado por la media y la mediana (lineal)")
 axis(1)
 axis(2)
+lines(barras_1Look[,214])
 lines(Filtrado_Mediana5x5[, 214], lwd=3, col=colores[1])
 lines(Filtrado_Media5x5[, 214], lwd=3, col=colores[3])
 lines(barras[, 214],col=colores[2])
+legend("top", lwd = c(1,3,3,1), col = c(1, colores[c(1,3,2)]), ncol=4, legend = c("Speckle", "Mediana", "Media", "Verdad"))
+
+plot(barras_1Look[, 214], type="n", log="y", xlab = "Línea", ylab = "Valores observados", axes = FALSE,
+     main = "Columna 214: verdad y filtrado por la media y la mediana (semilogarítmico)")
+axis(1)
+axis(2)
+lines(barras_1Look[,214])
+lines(Filtrado_Mediana5x5[, 214], lwd=3, col=colores[1])
+lines(Filtrado_Media5x5[, 214], lwd=3, col=colores[3])
+lines(barras[, 214],col=colores[2])
+legend("top", lwd = c(1,3,3,1), col = c(1, colores[c(1,3,2)]), ncol=4, legend = c("Speckle", "Mediana", "Media", "Verdad"))
+
+plot(barras_1Look[128, ], type="n", xlab = "Línea", ylab = "Valores observados", axes = FALSE,
+     main = "Línea 128: verdad y filtrado por la media y la mediana (lineal)")
+axis(1)
+axis(2)
+lines(barras_1Look[128, ])
+lines(Filtrado_Mediana5x5[128, ], lwd=3, col=colores[1])
+lines(Filtrado_Media5x5[128, ], lwd=3, col=colores[3])
+lines(barras[128, ],col=colores[2])
+legend("top", lwd = c(1,3,3,1), col = c(1, colores[c(1,3,2)]), ncol=4, legend = c("Speckle", "Mediana", "Media", "Verdad"))
+
+plot(barras_1Look[128, ], type="n", log="y", xlab = "Línea", ylab = "Valores observados", axes = FALSE,
+     main = "Línea 128: verdad y filtrado por la media y la mediana (semilogarítmico)")
+axis(1)
+axis(2)
+lines(barras_1Look[128, ])
+lines(Filtrado_Mediana5x5[128, ], lwd=3, col=colores[1])
+lines(Filtrado_Media5x5[128, ], lwd=3, col=colores[3])
+lines(barras[128, ],col=colores[2])
+legend("top", lwd = c(1,3,3,1), col = c(1, colores[c(1,3,2)]), ncol=4, legend = c("Speckle", "Mediana", "Media", "Verdad"))
