@@ -1,11 +1,39 @@
 ---
 title: ''
 output:
-  html_document: default
-  html_notebook: default
   pdf_document: default
+  html_notebook: default
+  html_document: default
 ---
 
+
+Nome: Antonio C. Medeiros  
+Meteorologista  
+Gerente de projetos  
+Laboratório de Computação Cientifíca e Analise Númerica - LaCCAN  
+  
+E-mail:antoniomedeiros@laccan.ufal.br / medeiros.tonny@gmail.com  
+Contato: +55 82 98814-6163 (WhatsApp)  
+  
+O curso será dividido:  
+R statistic  
+  
+T1.  Introducción  
+T2.  Lectura de datos  
+T3.  Operaciones básicas en R  
+T4.  Visualización de imágenes, mejoría de contraste  
+T5.  Análisis estadístico descriptivo  
+T6.  Análisis estadístico cuantitativo  
+  
+Parte II: PolSARpro  
+  
+T7.  Introducción  
+T8.  Lectura de datos  
+T9.  Operaciones en PolSARpro: filtrado de speckle, descomposiciones  
+polarimétricas, clasificación  
+T10. Exportación  
+  
+  
 ## T1 -- Introducción
 
 R é um programa livre e um ambiente computacional de exploração de gráficos e

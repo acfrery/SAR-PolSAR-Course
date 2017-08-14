@@ -1,6 +1,8 @@
 ---
-title: ""
-output: html_notebook
+title: ''
+output:
+  pdf_document: default
+  html_notebook: default
 ---
 
 ## T3 -- Operaciones basicas en R
