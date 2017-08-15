@@ -90,7 +90,7 @@ Sea $Z_1,\dots,Z_N$
 y la solución de la siguiente ecuación:
 $$
 N\log \widehat L + \frac 1N \sum_{n=1}^N \log|Z_n| -
-\log|\widehat{\mathbf{\Sigma}}| - \Psi_m^{(0)}(\widehat{L}) = 0
+\log|\widehat{\mathbf{\Sigma}}| - \Psi_m^{(0)}(\widehat{L}) = 0,
 $$
 donde $\psi_m^{(0)}(\cdot)$ es la función poligama multivariada de orden cero, y
 $$
@@ -113,4 +113,21 @@ Si $Z\sim \mathcal W(\mathbf{\Sigma,L})$, entonces podemos proponer una versión
 Si $X$ es constante, uno, volvemos al caso Wishart. 
 Otras distribuciones para $X$ producen otras distribuciones para el retorno polarimétrico $Z$.
 
+Un modelo interesante para $X$ es la distribución gama inversa, que incorpora un parámetro de rugosidad.
+Su densidad es
+$$
+f_X(x; \alpha) = \frac{x^{\alpha -1}}{(-\alpha-1)^\alpha \Gamma(-\alpha)} 
+\exp\Big\{
+\frac{\alpha+1}{x}
+\Big\},
+$$
+y $\alpha<0$ modela la rugosidad (mientras menor, menos rugoso).
 
+La distribución que resulta para $Z=XY$ se denomina ley $\mathcal{G}_{\text{Pol}}^0$, y su densidad es
+$$
+f_Z(z; \alpha,\Sigma,L) = \frac{L^{mL}|z|^{L-m}\Gamma(Lm-\alpha)}{h(L,m) |\Sigma| \Gamma(-\alpha) (-\alpha-1)^{\alpha}}
+\big(
+n \operatorname{tr}(\Sigma^{-1}z+ (\alpha-1))^{\alpha-Lm}
+\big),
+$$
+donde $h(L,m)=\pi^{m(m-1)}/2 \Gamma(L)\cdots\Gamma(L-m+1)$, y $m$ es el número de polarizaciones (para datos fully PolSAR es 3 ó 4).
