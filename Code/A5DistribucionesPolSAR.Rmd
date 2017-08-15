@@ -1,6 +1,8 @@
 ---
-title: ""
-output: html_notebook
+title: ''
+output:
+  html_document: default
+  html_notebook: default
 ---
 
 ## A5 -- Datos polarimetricos: distribuciones 
@@ -17,7 +19,7 @@ La condición de reciprocidad estipula la igualdad $S_\text{HV}=S_\text{VH}$,
 que se verifica en la gran mayoría de los blancos.
 La matriz de dispersión puede, por ende, simplificarse a un vector de tres entradas complejas:
 $$
-\bm{s}=\begin{bmatrix}
+\mathbf{s}=\begin{bmatrix}
 S_\text{VV}
 &
 \sqrt{2}\,S_\text{VH}
@@ -31,46 +33,84 @@ Tal como vimos, este vector aleatorio puede ser descripto por una distribución 
 Se suele hacer procesamiento multilook para aumentar la relación señal/ruido.
 El dato polarimétrico multilook se forma promediando matrices muestrales de covarianza:
 $$
-\bm{Z}
+\mathbf{Z}
 =
 \frac{1}{L}
 \sum_{\ell=1}^L 
-\bm{s}_\ell \bm{s}_\ell^{\text{H}},
+\mathbf{s}_\ell \mathbf{s}_\ell^{\text{H}},
 $$
 donde ${}^{\text{H}}$ representa el complejo conjugado transpuesto de un vector, 
-$\bm{s}_\ell$, $\ell=1,2,\ldots,L$ son vectores de dispersión, 
+$\mathbf{s}_\ell$, $\ell=1,2,\ldots,L$ son vectores de dispersión, 
 y $L$ es el número de looks.
 %
-La matrix $\bm{Z}$ es
+La matrix $\mathbf{Z}$ es
 hermitiana positiva definida 
 y
-obedece una distribución de Wishart compleja multilook escalada [@EstimationEquivalentNumberLooksSAR] de parámetros $\bm{\Sigma}$ y $L$.
+obedece una distribución de Wishart compleja multilook escalada [@EstimationEquivalentNumberLooksSAR] de parámetros $\mathbf{\Sigma}$ y $L$.
 La densidad de probabilidad que caracteriza esta distribución está dada por:
 \begin{equation}
 \label{eq:denswishart}
-f_{\bm{Z}}(\bm{Z}';\bm{\Sigma},L) 
+f_{\mathbf{Z}}(\mathbf{Z}';\mathbf{\Sigma},L) 
 =
-\frac{L^{mL}|\bm{Z}'|^{L-m}}{|\bm{\Sigma}|^L \Gamma_m(L)} 
+\frac{L^{mL}|\mathbf{Z}'|^{L-m}}{|\mathbf{\Sigma}|^L \Gamma_m(L)} 
 \exp\big(
 -
 L
-\operatorname{tr}(\bm{\Sigma}^{-1}\bm{Z}')
+\operatorname{tr}(\mathbf{\Sigma}^{-1}\mathbf{Z}')
 \big)
 ,
 \end{equation}
-%
 donde 
 $\Gamma_m(L)=\pi^{m(m-1)/2}\prod_{i=0}^{m-1}\Gamma(L-i)$ 
 para $L\geq m$, 
 $\Gamma(\cdot)$ es la función gama, 
 $\operatorname{tr}(\cdot)$ representa el operador trazo de una matriz, 
 $|\cdot|$ denota el operador determinante, 
-$\bm{\Sigma}$ es la matriz de covarianza compleja asociada a $\bm{s}$, $\Sigma=\operatorname{E}\bigl(\bm{s}\bm{s}^{\text{H}}\bigr)$, donde $\operatorname{E}(\cdot)$ es la esperanza matemática. 
-La esperanza de $\bm{Z}$
+$\mathbf{\Sigma}$ es la matriz de covarianza compleja asociada a $\mathbf{s}$, $\Sigma=\operatorname{E}\bigl(\mathbf{s}\mathbf{s}^{\text{H}}\bigr)$, donde $\operatorname{E}(\cdot)$ es la esperanza matemática. 
+La esperanza de $\mathbf{Z}$
 verifica
-$\operatorname{E}(\bm{Z})=\bm{\Sigma}$.
-% 
+$\operatorname{E}(\mathbf{Z})=\mathbf{\Sigma}$.
+
 Denotamos
-$\bm{Z}\sim \mathcal W(\bm{\Sigma},L)$ 
-que $\bm{Z}$
+$\mathbf{Z}\sim \mathcal W(\mathbf{\Sigma},L)$ 
+que $\mathbf{Z}$
 obedece una distribución de Wishart compleja multilook escalada.
+
+A pesar de tratarse de una distribución para matrices complejas, la densidad que la caracteriza es simple. La distribución marginal de los elementos de la diagonal es gama, tal como habíamos visto para el caso de intensidad. Se conocen algunas distribuciones marginales [@Lee1994IntensityPhaseStatistics]:
+
+* pares de intensidades
+* par intensidad-fase
+
+La distribución de otras marginales es un poco más difícíl de obtener [ver @TriVariateChiSquaredFromWishart].
+
+La estimación por máxima verosimilitud de los parámetros de la distribución $\mathcal W(\mathbf\Sigma,L)$ es relativamente simple. 
+Sea $Z_1,\dots,Z_N$
+ una muestra de observaciones de variables aleatorias idénticamente distribuídas según esta ley. Los estimadores son
+ $\widehat{\mathbf{\Sigma}} = \frac1N \sum_{n=1}^N Z_n$
+y la solución de la siguiente ecuación:
+$$
+N\log \widehat L + \frac 1N \sum_{n=1}^N \log|Z_n| -
+\log|\widehat{\mathbf{\Sigma}}| - \Psi_m^{(0)}(\widehat{L}) = 0
+$$
+donde $\psi_m^{(0)}(\cdot)$ es la función poligama multivariada de orden cero, y
+$$
+\psi_m^{(v)}(L)=\sum_{i=0}^{m-1} \psi^{(v)}(L-i),
+$$
+$\psi^{(v)}(\cdot)$ es la función poligama ordinaria, dada por
+$$
+\psi^{(v)}(L)=\frac{\partial^{v+1} \log\Gamma(L)}{\partial L^{v+1}},
+$$
+para $v\geq 0$, y
+$\psi^{(0)}(\cdot)$ 
+es la función digama [@EntropyBasedStatisticalAnalysisPolSAR].
+
+La propuesta de técnicas alternativas de estimación que tomen en cuenta la posibilidad de contaminación es un campo interesante de investigación.
+
+El modelo 
+ es el modelo polarimétrico por excelencia para datos sin textura. De la misma manera que obtuvimos generalizaciones para el modelo gama en el caso de intensidad, podemos hacerlo para el caso polarimétrico.
+
+Si $Z\sim \mathcal W(\mathbf{\Sigma,L})$, entonces podemos proponer una versión generalizada haciendo $Z=X$ con  $Z\sim \mathcal W(\mathbf{\Sigma},L)$ y $X$ una variable aleatoria positiva de media unitaria. De esta forma modelamos la posibilidad de que fluctuaciones aleatorias de la matriz de covarianza $\Sigma$ sin que se afecte su valor medio. 
+Si $X$ es constante, uno, volvemos al caso Wishart. 
+Otras distribuciones para $X$ producen otras distribuciones para el retorno polarimétrico $Z$.
+
+
