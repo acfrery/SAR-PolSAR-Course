@@ -1,6 +1,8 @@
 ---
-title: ""
-output: html_notebook
+title: ''
+output:
+  html_document: default
+  html_notebook: default
 ---
 
 ## A4 -- Evaluación de filtros
@@ -33,3 +35,31 @@ Al computar el cociente ideal tenemos $\widetilde I = Z/\widetilde X = XY/X=Y$ t
 Así siendo, una forma de medir cuán alejado el filtro $\Psi$ está del filtro ideal $\widetilde \Psi$ es medir el alejamiento de la imagen cociente $I$ de la imagen cociente ideal $\widetilde I$, una colección de variables aleatorias independientes e identicamente distribuídas según una ley gama de media unitaria y parámetro de forma igual al número de looks original.
 
 Gomez et al. [@UnassistedQuantitativeEvaluationDespecklingFilters] se basan en esa idea para proponer una medida de calidad de filtros de speckle.
+
+Veamos un ejemplo con la famosa imagen de San Francisco.
+
+![San Francisco AIRSAR](SanFrancisco.png)
+
+Aplicación y evaluación del filtro de Lee.
+
+![Filtro de Lee](E_Lee_SanFrancisco.png)		
+
+![Cociente filtro de Lee](E_Lee_Ratio_SanFrancisco.png)
+
+Aplicación y evaluación del filtro FANS.
+
+![Filtro FANS](FANS_SanFrancisco.png)
+
+![Cociente filtro FANS](FANS_Ratio_SanFrancisco.png)
+
+Aplicación y evaluación del filtro SRAD.
+
+![Filtro SRAD](SRAD_SanFrancisco.png)
+
+![Cociente filtro SRAD](SRAD_Ratio_SanFrancisco.png)
+
+La evaluación cuantitativa se hace en dos partes, usando la imagen original y la imagen cociente. La primera se basa en estadísticos de primer orden (media, que debería ser unitaria, y número equivalente de looks, que debería ser igual al de la imagen original).
+
+![Diagrama en bloques de la evaluación de estadísticos de primer orden](Estructura.png)
+
+La segunda parte mide la estructura remanescente en la imagen razón, que debería ser nula, comparando un estadístico de textura de Haralik [@StatisticalStructuralApproachesTexture] con la media de ese estadístico calculado sobre versiones aleatorizadas de la imagen cociente.

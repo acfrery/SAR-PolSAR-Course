@@ -1,9 +1,9 @@
 ---
 title: "Procesamiento y Análisis de Imágenes PolSAR usando R"
 output:
-  pdf_document: default
-  html_notebook: default
   html_document: default
+  html_notebook: default
+  pdf_document: default
 bibliography: referencias.bibtex
 ---
 
@@ -13,34 +13,10 @@ bibliography: referencias.bibtex
 ```{r child = 'A2ModeloMultiplicativo.Rmd'}
 ```
 
-```{r child = 'T1Intro.Rmd'}
-```
-
-```{r child = 'T2Lectura.Rmd'}
-```
-
-```{r child = 'T3Operaciones.Rmd'}
-```
-
-```{r child = 'T4Visualiza.Rmd'}
-```
-
-```{r child = 'T5AnalisisDescriptivo.Rmd'}
-```
-
-```{r child = 'T6AnalisisCuantitativo.Rmd'}
-```
-
 ```{r child = 'A3Filtros.Rmd'}
 ```
 
 ```{r child = 'A4EvaluacionFiltros.Rmd'}
-```
-
-```{r child = 'T7Intro.Rmd'}
-```
-
-```{r child = 'T8Lectura.Rmd'}
 ```
 
 ```{r child = 'A5DistribucionesPolSAR.Rmd'}
@@ -50,12 +26,6 @@ bibliography: referencias.bibtex
 ```
 
 ```{r child = 'A7Clasificacion.Rmd'}
-```
-
-```{r child = 'T9OperacionesPolSAR.Rmd'}
-```
-
-```{r child = 'T10Exportacion.Rmd'}
 ```
 
 ```{r child = 'A8DeteccionCambios.Rmd'}

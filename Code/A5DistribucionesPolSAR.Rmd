@@ -6,3 +6,71 @@ output: html_notebook
 ## A5 -- Datos polarimetricos: distribuciones 
 
 Una importante referencia para este tema es [@SurveyStatisticalPolSAR].
+
+La información polarimétrica surge del uso de iluminación coherente.
+A cada pixel asocia una matriz compleja de dimensión $2\times2$ cuyas entradas son las señales complejas que vimos inicialmente, pero en cuatro dimensiones diferentes:
+$S_\text{VV}$, $S_\text{VH}$, $S_\text{HV}$, y $S_\text{HH}$, 
+donde $S_{ij}$ representa la señal retrodispersada que fue transmitida en la polarización lineal $i$ y recibida en la polarización lineal $j$; 
+$\text{H}$ y $\text{V}$ denotan, respectivamente, Horizontal y Vertical.
+
+La condición de reciprocidad estipula la igualdad $S_\text{HV}=S_\text{VH}$,
+que se verifica en la gran mayoría de los blancos.
+La matriz de dispersión puede, por ende, simplificarse a un vector de tres entradas complejas:
+$$
+\bm{s}=\begin{bmatrix}
+S_\text{VV}
+&
+\sqrt{2}\,S_\text{VH}
+&
+S_\text{HH}
+\end{bmatrix}^\top,
+$$ 
+donde ${}^\top$ denota transposición de vector.
+Tal como vimos, este vector aleatorio puede ser descripto por una distribución gaussiana compleja de media nula [@Goodman63b].
+
+Se suele hacer procesamiento multilook para aumentar la relación señal/ruido.
+El dato polarimétrico multilook se forma promediando matrices muestrales de covarianza:
+$$
+\bm{Z}
+=
+\frac{1}{L}
+\sum_{\ell=1}^L 
+\bm{s}_\ell \bm{s}_\ell^{\text{H}},
+$$
+donde ${}^{\text{H}}$ representa el complejo conjugado transpuesto de un vector, 
+$\bm{s}_\ell$, $\ell=1,2,\ldots,L$ son vectores de dispersión, 
+y $L$ es el número de looks.
+%
+La matrix $\bm{Z}$ es
+hermitiana positiva definida 
+y
+obedece una distribución de Wishart compleja multilook escalada [@EstimationEquivalentNumberLooksSAR] de parámetros $\bm{\Sigma}$ y $L$.
+La densidad de probabilidad que caracteriza esta distribución está dada por:
+\begin{equation}
+\label{eq:denswishart}
+f_{\bm{Z}}(\bm{Z}';\bm{\Sigma},L) 
+=
+\frac{L^{mL}|\bm{Z}'|^{L-m}}{|\bm{\Sigma}|^L \Gamma_m(L)} 
+\exp\big(
+-
+L
+\operatorname{tr}(\bm{\Sigma}^{-1}\bm{Z}')
+\big)
+,
+\end{equation}
+%
+donde 
+$\Gamma_m(L)=\pi^{m(m-1)/2}\prod_{i=0}^{m-1}\Gamma(L-i)$ 
+para $L\geq m$, 
+$\Gamma(\cdot)$ es la función gama, 
+$\operatorname{tr}(\cdot)$ representa el operador trazo de una matriz, 
+$|\cdot|$ denota el operador determinante, 
+$\bm{\Sigma}$ es la matriz de covarianza compleja asociada a $\bm{s}$, $\Sigma=\operatorname{E}\bigl(\bm{s}\bm{s}^{\text{H}}\bigr)$, donde $\operatorname{E}(\cdot)$ es la esperanza matemática. 
+La esperanza de $\bm{Z}$
+verifica
+$\operatorname{E}(\bm{Z})=\bm{\Sigma}$.
+% 
+Denotamos
+$\bm{Z}\sim \mathcal W(\bm{\Sigma},L)$ 
+que $\bm{Z}$
+obedece una distribución de Wishart compleja multilook escalada.
