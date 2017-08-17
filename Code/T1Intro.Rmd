@@ -68,8 +68,21 @@ usando a função demo(). Vamos ver algumas demonstrações de gráficos que pod
 o seguinte na linha de comandos:  
 > demo(graphics) # Vai aparecer uma mensagem pedindo que você tecle Enter para
 prosseguir, depois clique na janela do gráfico para ir passando os exemplos.  
-> demo(persp)  
-> demo(image)  
+
+```{R}
+demo(image)
+```
+
+      
+> demo(image)
+
+Agora vamos ver outros tipos.  
+
+```{R}
+demo(graphics)
+```
+
+
 
 ### Pacotes do R
 O R é um programa leve (ocupa pouco espaço e memória) e geralmente roda rápido, até em computadores
@@ -115,6 +128,11 @@ O Tinn-R é um editor/processador de texto ASCII/UNICODE genérico para o sistem
 RStudio é um ambiente de desenvolvimento integrado (IDE) para R. Ele inclui um console, editor de destaque de sintaxe que suporta a execução direta de código, bem como ferramentas para traçar, fazer histórico, depurar e gerenciar espaço de trabalho. 
 
 O RStudio está disponível em edições comerciais e de código aberto e é executado na área de trabalho (Windows, Mac e Linux) ou em um navegador conectado ao RStudio Server ou RStudio Server Pro (Debian / Ubuntu, RedHat / CentOS e SUSE Linux).
+
+
+R script é uma ambiente onde você pode adicionar uma nova janela dentro do seu ambiente Rstudio, facilitando assim a sua manupulação, diferente do R linha de comando.  
+
+R notebook você cria um arquivo onde pode-se colocar incluso varias programas como códigos R, Latex, CC e outros, estamos utilizando esse modelo. Além de outro modos onde podemos abrir uma janela.  
 
 
 
