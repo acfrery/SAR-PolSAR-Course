@@ -116,4 +116,18 @@ help(lynx)
 ```
 
 
+## T2 -- Lectura de datos PolSAR
+
+Carregar o arquivo .rdata, nestes arquivo temos a covariância (C3) da imagem que salvamos, por exemplo San Francisc.  
+  
+Click no arquivo AIRSAR_SanFrancisc_Enxu.rdata que esta dentro da pasta raiz.  
+
+```{R}
+
+#read("AIRSAR_SanFrancisc_Enxu.RData")
+
+```
+
+
+
 
